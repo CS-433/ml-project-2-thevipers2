@@ -44,7 +44,6 @@ class Autoencoder(nn.Module) :
         x = self.decoder(x)
         return x
     
-    
 def train(input_data) : 
      for epoch in range(epochs) : # loop over the dataset multiple times
         # récupérer les inputs 
