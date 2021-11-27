@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""cross validation"""
 import numpy as np
 
 #Globalement fonctionne parfaitement, seul question niveau interpretation plutôt :
