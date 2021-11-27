@@ -51,8 +51,8 @@ class Autoencoder(nn.Module) :
     def train() : 
          for epoch in range(self.epochs) : 
                 # récupérer les inputs 
-                ''''''''''''''''''''''''''''''''''
-                ''''''''''''''''''''''''''''''''''
+                '''
+                '''
                 # predictions
                 output = self(data)
                 # calculate loss
@@ -61,6 +61,4 @@ class Autoencoder(nn.Module) :
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
-
-            print('epoch [{}/{}], loss:{:.4f}'
-                  .format(epoch + 1, self.epochs, loss.data))
+            print('epoch [{}/{}], loss:{:.4f}'.format(epoch + 1, self.epochs, loss.data))

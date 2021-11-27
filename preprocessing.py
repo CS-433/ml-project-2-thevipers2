@@ -72,7 +72,6 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) : #Checker size !!!!!!!!
     for i in range(int(Ux.shape[0]/size)) :
         ux = get_point(Ux, i, size)
         uy = get_point(Uy, i, size)
-        print('ux', ux)
         
         ux_s1, uy_s1 = sample_points(ux, uy, ratio_pts)
         ux_s2, uy_s2 = sample_times(ux_s1, uy_s1, ratio_t)

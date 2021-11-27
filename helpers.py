@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""cross validation"""
+"""
+Helpers functions
+"""
 import numpy as np
 
 
