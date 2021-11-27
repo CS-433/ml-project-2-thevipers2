@@ -8,59 +8,59 @@ import torch
 from torch import nn                       
 from torch.autograd import Variable 
 
+# define network parameters
+learningRate=1e-3
+epochs=100
+
 class Autoencoder(nn.Module) :
-    def __init__(self, epochs=100, batchSize=128, learningRate=1e-3) :
-        super(Autoencoder, self).__init__()
-        # initializing network parameters
-        self.epochs = epochs                               
-        self.batchSize = batchSize
-        self.learningRate = learningRate
+    def __init__(self, inputsize) :
+        super().__init__()
         
         # encoder network architecture with 4 linear layers
         self.encoder = nn.Sequential(
-        nn.Linear(784, 128),
+        nn.Linear(inputsize, 25),
         nn.ReLU(True),
-        nn.Linear(128, 64),
+        nn.Linear(25, 12),
         nn.ReLU(True),
-        nn.Linear(64, 12),
+        nn.Linear(12, 8),
         nn.ReLU(True),
-        nn.Linear(12, 3)
+        nn.Linear(8, 5)
         )
         
         # decoder network architecture with 4 linear layers
         self.decoder = nn.Sequential(
-        nn.Linear(3, 12),
+        nn.Linear(5, 8),
         nn.ReLU(True),
-        nn.Linear(12, 64),
+        nn.Linear(8, 12),
         nn.ReLU(True),
-        nn.Linear(64, 128),
+        nn.Linear(12, 25),
         nn.ReLU(True),
-        nn.Linear(128, 784),
-        nn.ReLU(True) # que mettre en output layer ? ReLU ? Tanh ? Sigmoid ? 
+        nn.Linear(25, inputsize),
+        nn.ReLU(True)
         )
-        
-        # optimizer and loss
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=self.learningRate, weight_decay=1e-5)
-        self.criterion = nn.MSELoss()
         
     def forward(self,x) : 
         x = self.encoder(x)
         x = self.decoder(x)
         return x
     
-    def train() : 
-         for epoch in range(self.epochs) : 
-                # récupérer les inputs 
-                ''''''''''''''''''''''''''''''''''
-                ''''''''''''''''''''''''''''''''''
-                # predictions
-                output = self(data)
-                # calculate loss
-                loss = self.criterion(output, data)
-                # backpropagation
-                self.optimizer.zero_grad()
-                loss.backward()
-                self.optimizer.step()
-
-            print('epoch [{}/{}], loss:{:.4f}'
-                  .format(epoch + 1, self.epochs, loss.data))
+    
+def train(input_data) : 
+     for epoch in range(epochs) : # loop over the dataset multiple times
+        # récupérer les inputs 
+        data = torch.from_numpy(input_data)
+        # optimizer and loss
+        net = Autoencoder(inputsize = (input_data).shape[1])
+        optimizer = torch.optim.Adam(net.parameters(), lr=learningRate, weight_decay=1e-5)
+        criterion = nn.MSELoss()  
+        # predictions
+        data = data.float()
+        output = net(data)
+        # calculate loss
+        loss = criterion(output, data)
+        # backpropagation
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        # display the epoch training loss
+        print("epoch : {}/{}, loss = {:.6f}".format(epoch + 1, epochs, loss))           
