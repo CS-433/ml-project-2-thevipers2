@@ -179,6 +179,6 @@ def flatten(Ux, Uy, ratios_pts, size=5509):
     # delete the initialization of zeros in the first column
     flattened_array_all = np.delete(flattened_array_all, 0, axis=1)
     
-    return flattened_array_all
+    return flattened_array_all.T
 
 
