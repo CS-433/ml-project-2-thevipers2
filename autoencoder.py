@@ -44,22 +44,22 @@ class Autoencoder(nn.Module) :
         x = self.decoder(x)
         return x
     
-def train(input_data) : 
-     for epoch in range(epochs) : # loop over the dataset multiple times
-        # récupérer les inputs 
-        data = torch.from_numpy(input_data)
-        # optimizer and loss
-        net = Autoencoder(inputsize = (input_data).shape[1])
-        optimizer = torch.optim.Adam(net.parameters(), lr=learningRate, weight_decay=1e-5)
-        criterion = nn.MSELoss()  
-        # predictions
-        data = data.float()
-        output = net(data)
-        # calculate loss
-        loss = criterion(output, data)
-        # backpropagation
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        # display the epoch training loss
-        print("epoch : {}/{}, loss = {:.6f}".format(epoch + 1, epochs, loss))           
+    def train(input_data) : 
+         for epoch in range(epochs) : # loop over the dataset multiple times
+            # récupérer les inputs 
+            data = torch.from_numpy(input_data)
+            # optimizer and loss
+            net = Autoencoder(inputsize = (input_data).shape[1])
+            optimizer = torch.optim.Adam(net.parameters(), lr=learningRate, weight_decay=1e-5)
+            criterion = nn.MSELoss()  
+            # predictions
+            data = data.float()
+            output = net(data)
+            # calculate loss
+            loss = criterion(output, data)
+            # backpropagation
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            # display the epoch training loss
+            print("epoch : {}/{}, loss = {:.6f}".format(epoch + 1, epochs, loss))           

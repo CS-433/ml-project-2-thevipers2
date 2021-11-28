@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from helpers import *
 
 #Globalement fonctionne parfaitement, seul question niveau interpretation plutôt :
 #Le sample est basé sur shuffle, sauf que du coup ça shuffle les temps et les positions, ça change rien pour le NN,
@@ -8,6 +9,8 @@ import numpy as np
 '''
 Preprocessing
 '''
+
+###########Sampling methods##########
 
 def sample_points(ux, uy, ratio, seed=1) :
     '''
@@ -19,8 +22,8 @@ def sample_points(ux, uy, ratio, seed=1) :
         * ratio : # of positions sampled = ratio * # of positions initially
         * seed : to generate the random for sampling
     Outputs:
-        * new_Ux :
-        * new_Uy :
+        * new_ux : Basically same matrice as ux but with rows (positions) sampled (and shuffled, due to the way the sampling is made) 
+        * new_uy : Basically same matrice as uy but with rows (positions) sampled (and shuffled, due to the way the sampling is made) 
     '''
     # set seed
     np.random.seed(seed)
@@ -43,8 +46,8 @@ def sample_times(ux, uy, ratio, seed=1) :
         * ratios : # of time steps sampled = ratio * # of time steps initially
         * seed : to generate the random for sampling
     Outputs:
-        * new_Ux :
-        * new_Uy :
+        * new_ux : Basically same matrice as ux but with columns (times) sampled (and shuffled, due to the way the sampling is made) 
+        * new_uy : Basically same matrice as uy but with columns (times) sampled (and shuffled, due to the way the sampling is made) 
     '''
     # set seed
     np.random.seed(seed)
@@ -62,10 +65,14 @@ def get_point(U, n, size) :
     Get datapoint number n from the matrix Ux or Uy (recall that 1 datapoint is the output matrix of 1 Stokes simulation)
     Inputs
         * U : Matrix of velocities at different position on the grid and at different time step (2D matrix)
+                # of rows : nb_of_datapoints * nb_rows_of_1_datapoint
+                # of columns : nb_of_time_steps of the simulations
         * n : number of data point of interest
         * size : # of rows (points) belonging to 1 simulation, in our case 1 simulation = 1 datapoint for our neural networks
     Outputs:
-        * U_n :
+        * U_n : Datapoint number n from the matrix U
+                # of rows : nb_rows_of_1_datapoint
+                # of columns : nb_of_time_steps of the simulations
     '''
     U_n = U[n*size:(n+1)*size, :]
     return U_n
@@ -82,8 +89,10 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) : #Checker size !!!!!!!!
         * ratios_t : # of time_steps sampled = ratio* # of time_steps initially
         * size : # of rows (points) belonging to 1 simulation, in our case 1 simulation = 1 datapoint for our neural networks
     Outputs:
-        * new_Ux :
-        * new_Uy :
+        * new_Ux : Basically same matrice as ux but with rows (positions) and columns (times) sampled (and shuffled, due to the way the 
+                    sampling is made) 
+        * new_Uy : Basically same matrice as uy but with rows (positions) and columns (times) sampled (and shuffled, due to the way the 
+                    sampling is made) 
     '''
     size = int(np.floor(size))
     new_Ux = []
@@ -119,6 +128,9 @@ def get_samples(Ux, Uy, ratios_pts, ratios_t, size=5509) :
             samples_Ux.append(new_Ux)
             samples_Uy.append(new_Uy)
     return 0 
+
+
+###########Flattening methods##########
 
 def flatten(Ux, Uy, ratios_pts, size=5509):
     '''
