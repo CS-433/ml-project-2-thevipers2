@@ -4,7 +4,7 @@ Helpers functions
 """
 import numpy as np
 
-
+#A supprimer ??? comme pas utiliser 
 def load_csv_data(data_path):
     """Loads data and returns X (which is also Y in our case) as a numpy array"""
     x = np.genfromtxt(data_path, delimiter=",")
@@ -28,4 +28,20 @@ def get_Nu_Nt_sampled(U, U_sampled) :
 
     nb_of_pts = U.shape[0]/5509
     
-    return int(U_sampled.shape[0]/nb_of_pts), int(U.shape[1])
+    return int(U_sampled.shape[0]/nb_of_pts), int(U_sampled.shape[1])
+
+
+def plot_sampled_coord(indices, positions) :
+    '''
+    Plot the sampled positions on a graph with coordinates x in function of coordinates y
+    '''
+    coord_path = 'data/coordinates.csv'
+    coords = np.genfromtxt(coord_path, delimiter=",")
+    np.nan_to_num(coords, False)
+    
+    new_x = positions[indices, 0]
+    new_y = positions[indices, 1]
+    
+    plt.plot(new_x, new_y)
+
+

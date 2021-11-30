@@ -30,30 +30,35 @@ def sample_points(ux, uy, ratio, seed=1) :
     # generate random indices
     indices = np.random.permutation(ux.shape[0])
     new_inds = indices[ : int(np.floor(ratio * ux.shape[0]))]
+    
+    #generate "position-sampled" ux and uy :
     new_ux = ux[new_inds, :]
     new_uy = uy[new_inds, :]
     
-    return new_ux, new_uy
+    return new_ux, new_uy, new_inds
 
 
-def sample_times(ux, uy, ratio, seed=1) :
+def sample_times(ux, uy, ratio) :
     '''
     This function samples 1 datapoint which is contained in the matrices ux and uy (matrices obtained by a single simulation).
     The sampling occurs along the axis 1 which corresponds to the time steps of the simulation.
+    The sampling is not uniform (equispaced)
     Inputs:
         * ux : matrix of the velocity along x for different positions (axis 0) and different time steps (axis 1)
         * uy : matrix of the velocity along y for different positions (axis 0) and different time steps (axis 1)
         * ratios : # of time steps sampled = ratio * # of time steps initially
         * seed : to generate the random for sampling
     Outputs:
-        * new_ux : Basically same matrice as ux but with columns (times) sampled (and shuffled, due to the way the sampling is made) 
-        * new_uy : Basically same matrice as uy but with columns (times) sampled (and shuffled, due to the way the sampling is made) 
+        * new_ux : Basically same matrice as ux but with columns (times) sampled
+        * new_uy : Basically same matrice as uy but with columns (times) sampled
     '''
-    # set seed
-    np.random.seed(seed)
-    # generate random indices
-    indices = np.random.permutation(ux.shape[1])
-    new_inds = indices[ : int(np.floor(ratio * ux.shape[1]))]
+    
+    #step = #indices/#new_indices = N / ratio * N = 1/ratio
+    step = int(1/ratio)
+    # generate indices
+    new_inds = np.arange(0, ux.shape[1], step)
+    
+    #generate "time-sampled" ux and uy :
     new_ux = ux[:, new_inds]
     new_uy = uy[:, new_inds]
     
@@ -78,7 +83,7 @@ def get_point(U, n, size) :
     return U_n
 
 
-def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) : #Checker size !!!!!!!!
+def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) :
     '''
     Function that samples the original matrices Ux and Uy along the axis 0 (samples the number of points considered on the grid
     of the simulation), and over the axis 1 (samples the number of time steps considered)
@@ -93,6 +98,7 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) : #Checker size !!!!!!!!
                     sampling is made) 
         * new_Uy : Basically same matrice as uy but with rows (positions) and columns (times) sampled (and shuffled, due to the way the 
                     sampling is made) 
+        * new_inds : indices of the sampled positions (axis=0) : # new_inds = ratio_pts * initial number of positions = ratio_pts * size    
     '''
     size = int(np.floor(size))
     new_Ux = []
@@ -101,16 +107,16 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) : #Checker size !!!!!!!!
         ux = get_point(Ux, i, size)
         uy = get_point(Uy, i, size)
         
-        ux_s1, uy_s1 = sample_points(ux, uy, ratio_pts)
+        ux_s1, uy_s1, new_inds = sample_points(ux, uy, ratio_pts)
         ux_s2, uy_s2 = sample_times(ux_s1, uy_s1, ratio_t)
         
         new_Ux.append(ux_s2)
         new_Uy.append(uy_s2)  
-        
+    
     new_Ux = np.concatenate(new_Ux)
     new_Uy = np.concatenate(new_Uy)
     
-    return new_Ux, new_Uy
+    return new_Ux, new_Uy, new_inds
         
 #ATTENTION : marche pas, nen pas utiliser pour l'instant
 def get_samples(Ux, Uy, ratios_pts, ratios_t, size=5509) :
