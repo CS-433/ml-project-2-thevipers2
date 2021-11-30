@@ -3,6 +3,7 @@
 Helpers functions
 """
 import numpy as np
+from matplotlib import pyplot as plt
 
 #A supprimer ??? comme pas utiliser 
 def load_csv_data(data_path):
@@ -31,17 +32,20 @@ def get_Nu_Nt_sampled(U, U_sampled) :
     return int(U_sampled.shape[0]/nb_of_pts), int(U_sampled.shape[1])
 
 
-def plot_sampled_coord(indices, positions) :
+def plot_sampled_coord(indices, coord_path='data/coordinates.csv') :
     '''
     Plot the sampled positions on a graph with coordinates x in function of coordinates y
     '''
-    coord_path = 'data/coordinates.csv'
+    
     coords = np.genfromtxt(coord_path, delimiter=",")
     np.nan_to_num(coords, False)
     
-    new_x = positions[indices, 0]
-    new_y = positions[indices, 1]
+    new_x = coords[indices, 0]
+    new_y = coords[indices, 1]
     
-    plt.plot(new_x, new_y)
+    plt.plot(new_x, new_y, 'bo')
+    plt.xlabel('x') ; plt.ylabel('y')
+    title = 'Sampled positions of the simulation (' + str(round((len(indices)/5509)*100, 1)) + '% of the positions)'
+    plt.title(title)
 
 
