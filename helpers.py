@@ -4,6 +4,10 @@ Helpers functions
 """
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
+import warnings
+
+warnings.filterwarnings('ignore')
 
 #A supprimer ??? comme pas utiliser 
 def load_csv_data(data_path):
@@ -43,7 +47,7 @@ def plot_sampled_coord(indices, coord_path='data/coordinates.csv') :
     new_x = coords[indices, 0]
     new_y = coords[indices, 1]
     
-    plt.plot(new_x, new_y, 'bo')
+    sns.scatterplot(new_x, new_y, color = 'red', alpha = .5)
     plt.xlabel('x') ; plt.ylabel('y')
     title = 'Sampled positions of the simulation (' + str(round((len(indices)/5509)*100, 1)) + '% of the positions)'
     plt.title(title)
