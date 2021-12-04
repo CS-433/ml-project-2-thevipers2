@@ -8,17 +8,14 @@ import torch
 from torch import nn                       
 from torch.autograd import Variable 
 
-# define network parameters
-learningRate=1e-1
-epochs=30
 
 class Autoencoder(nn.Module) :
-    def __init__(self) :
+    def __init__(self, input_size) :
         super().__init__()
         
         # encoder network architecture with 4 linear layers
         self.encoder = nn.Sequential(
-        nn.Linear(121000, 12),
+        nn.Linear(input_size, 12),
         nn.ReLU(True),
         nn.Linear(12, 5),
         )
@@ -27,7 +24,7 @@ class Autoencoder(nn.Module) :
         self.decoder = nn.Sequential(
         nn.Linear(5, 12),
         nn.ReLU(True),
-        nn.Linear(12, 121000),
+        nn.Linear(12, input_size),
         nn.ReLU(True)
         )
         
@@ -35,14 +32,9 @@ class Autoencoder(nn.Module) :
         x = self.encoder(x)
         x = self.decoder(x)
         return x
-    
 
-net = Autoencoder()
-optimizer = torch.optim.Adam(net.parameters(), lr=learningRate, weight_decay=1e-5)
-# creates a criterion that measures the mean squared error (squared L2 norm) 
-criterion = nn.MSELoss()  
 
-def train(input_data) : 
+def train(input_data, net, epochs, criterion, optimizer) :
     losses = []
     for epoch in range(epochs) : # loop over the dataset multiple times
         # recover the inputs 
@@ -69,7 +61,7 @@ def train(input_data) :
     # Plotting the loss decay
     plt.plot(losses)  
     
-def test(test_data) : 
+def test(test_data, net, epochs, criterion, optimizer) : 
     pred = []
     with torch.no_grad():
         test_data = torch.from_numpy(test_data)
