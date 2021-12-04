@@ -58,8 +58,12 @@ def Kfold(dataset, k_folds, model, epochs, criterion, optimizer) :
         testl_f.append(np.mean(foldperf['fold{}'.format(f)]['test_error']))
 
 
-    print('Performance of {} fold cross validation'.format(k_folds))
-    print("Average Training Error: {:.3f} \t Average Test Error: {:.3f}".format(np.mean(tl_f),np.mean(testl_f)))         
+    print('Performance of {} fold cross validation: '.format(k_folds))
+    print("Average Training Error: {:.3f} \t Average Test Error: {:.3f}".format(np.mean(tl_f),np.mean(testl_f)))
+    
+    return np.mean(testl_f)
+       
+        
 
 def Kfold_latent_layer(dataset, k_folds, model, epochs, criterion, optimizer, number_neurons) : 
     """
