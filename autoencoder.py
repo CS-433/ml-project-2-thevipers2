@@ -35,6 +35,17 @@ class Autoencoder(nn.Module) :
 
 
 def train(input_data, net, epochs, criterion, optimizer) :
+    """
+    Train the neural network.
+
+    Inputs:
+        * input_data (np.array): dataset to train the neural network 
+        * net (Pytorch neural network): the neural network to train
+        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
+        * criterion (method from nn.Module to estimate the loss): loss to use during training 
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+
+    """
     losses = []
     for epoch in range(epochs) : # loop over the dataset multiple times
         # recover the inputs 
@@ -59,9 +70,24 @@ def train(input_data, net, epochs, criterion, optimizer) :
     plt.xlabel('Iterations')
     plt.ylabel('Loss')
     # Plotting the loss decay
-    plt.plot(losses)  
+    plt.plot(losses)
+    
     
 def test(test_data, net, epochs, criterion, optimizer) : 
+    """
+    Evaluate the neural network.
+
+    Inputs:
+        * test_data (np.array): dataset to evaluate using the trained neural network 
+        * net (Pytorch neural network): the neural network to evaluate
+        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
+        * criterion (method from nn.Module to estimate the loss): loss to use during training 
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+        
+    Outputs:
+        * err (int): the relative test error 
+
+    """
     pred = []
     with torch.no_grad():
         test_data = torch.from_numpy(test_data)
@@ -76,9 +102,21 @@ def test(test_data, net, epochs, criterion, optimizer) :
 
 
 def relative_error(y, y_pred) : 
+    """
+    Evaluate the relative error.
+
+    Inputs:
+        * y (np.array): the true outputs (equal to the inputs in the autoencoder) 
+        * y_pred (np.array): the predicted outputs
+        
+    Outputs:
+        * rel_err (int): the relative test error 
+
+    """
     sum = 0
     for idx, y_val in enumerate(y):
         sum += np.linalg.norm((y_val-y_pred[idx]),2)**2/np.linalg.norm(y_val,2)**2
             
-    return sum/ len(y)
+    rel_err = sum/ len(y)
+    return rel_err
     
