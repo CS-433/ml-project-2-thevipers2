@@ -35,7 +35,8 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
     # define the K-fold Cross Validator
     kfold = KFold(n_splits=k_folds, shuffle=True, random_state = 1)
     foldperf={}
-   
+    f_test, f_train = [], []
+    
     # iterate through the folds
     for fold, (train_idx,val_idx) in enumerate(kfold.split(np.arange(len(dataset)))):
 
@@ -67,6 +68,8 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
             history['train_error'].append(train_error)
             history['test_error'].append(test_error)
 
+        f_test.append(test_error)
+        f_train.append(train_error)
         foldperf['fold{}'.format(fold+1)] = history  
 
     # compute the average relative errors over all the folds 
@@ -76,7 +79,7 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
         testl_f.append(np.mean(foldperf['fold{}'.format(f)]['test_error']))
 
     print('Performance of {} fold cross validation: '.format(k_folds))
-    print("Average Training Error: {:.3f} \t Average Test Error: {:.3f}".format(np.mean(tl_f),np.mean(testl_f)))
+    print("Average Training Error: {:.3f} \t Average Test Error: {:.3f}".format(np.mean(f_train),np.mean(f_test)))
     
     diz_ep = {'train_error_ep':[],'test_error_ep':[]}
 
