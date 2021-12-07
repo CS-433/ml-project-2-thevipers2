@@ -10,21 +10,38 @@ from torch.autograd import Variable
 
 
 class Autoencoder(nn.Module) :
-    def __init__(self, input_size) :
+    def __init__(self, input_size, neuron=5) :
         super().__init__()
         
-        # encoder network architecture with 4 linear layers
+        # encoder network architecture
         self.encoder = nn.Sequential(
-        nn.Linear(input_size, 12),
+        nn.Linear(input_size, 256),
         nn.ReLU(True),
-        nn.Linear(12, 5),
+        nn.Linear(256, 128),
+        nn.ReLU(True),   
+        nn.Linear(128, 64),
+        nn.ReLU(True),
+        nn.Linear(64, 32),
+        nn.ReLU(True), 
+        nn.Linear(32, 16),
+        nn.ReLU(True), 
+        nn.Linear(16, neuron),
+        nn.ReLU(True) 
         )
         
-        # decoder network architecture with 4 linear layers
+        # decoder network architecture
         self.decoder = nn.Sequential(
-        nn.Linear(5, 12),
+        nn.Linear(neuron, 16),
         nn.ReLU(True),
-        nn.Linear(12, input_size),
+        nn.Linear(16, 32),
+        nn.ReLU(True),
+        nn.Linear(32, 64),
+        nn.ReLU(True),
+        nn.Linear(64, 128),
+        nn.ReLU(True),
+        nn.Linear(128, 256),
+        nn.ReLU(True),
+        nn.Linear(256, input_size),
         nn.ReLU(True)
         )
         

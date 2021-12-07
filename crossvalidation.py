@@ -16,7 +16,7 @@ from torch.utils.data import Dataset, DataLoader,TensorDataset,random_split,Subs
 from autoencoder import *
 
 
-def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
+def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=5):
     """
     Perform K-fold cross-validation to estimate the train and test error of the model on the dataset.
 
@@ -26,7 +26,8 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
         * input_size (int): the size of the input  
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
-        * learningRate (float): learning rate  
+        * learningRate (float): learning rate 
+        * neuron (int): number of neurons in the latent layer
 
     Outputs:
         * mean_test_err (float): the average test error obtained during K-fold cross-validation 
@@ -41,7 +42,7 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
     for fold, (train_idx,val_idx) in enumerate(kfold.split(np.arange(len(dataset)))):
 
         # define the model
-        model = Autoencoder(input_size)
+        model = Autoencoder(input_size, neuron)
         optimizer = torch.optim.Adam(model.parameters(), lr=learningRate, weight_decay=1e-5)
         # print
         print('--------------------------------')
@@ -98,39 +99,36 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate):
     plt.title('Autoencoder error')
     plt.show()
     
-    mean_test_err = np.mean(testl_f)
+    mean_test_err = np.mean(f_test)
     
     return mean_test_err        
 
 
 
-def Kfold_latent_layer(dataset, k_folds, model, epochs, criterion, optimizer, number_neurons) : 
+def Kfold_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons) : 
     """
     Perform K-fold cross-validation to .
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
         * k_folds (int): number of folds to use for K-fold cross-validation
-        * model (Pytorch neural network): the Pytorch neural network to cross-validate
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
-        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+        * learningRate (float): learning rate 
         * number_neurons (np.array): the different number of neurons in the latent layer we want to test 
 
-    Outputs:
-        * results (np.array): the average test error obtained for each number of neurons 
-        * best_result (float): the best test error obtained
-        * best_neuron_number (int): the number of neuron in the latent layer that leads to the best test error
     """
     results = []
-    for neuron in number_neurons : 
-        res = Kfold(dataset, k_folds, model, epochs, criterion, optimizer)
+    for neuron in number_neurons :
+        res = Kfold(dataset, k_folds, input_size, epochs, criterion, lr, neuron)
         results.append(res)
     best_result = np.min(results)
-    best_neuron_number = np.argmin(results)
-    return results, best_result, best_neuron_number 
+    best_neuron_number = number_neurons[np.argmin(results)]
+    print(f"The results obtained for the number of latent neurons tested are the following : {results}.")
+    print(f"The best average test error obtained is {best_result}, and it is obtained with {best_neuron_number} neurons in the latent layer.")
 
 
+    
 
 def tuning(config):
     # Data Setup
