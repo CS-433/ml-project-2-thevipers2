@@ -16,7 +16,7 @@ from torch.utils.data import Dataset, DataLoader,TensorDataset,random_split,Subs
 from autoencoder import *
 
 
-def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=5):
+def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=5, momentum=0.9):
     """
     Perform K-fold cross-validation to estimate the train and test error of the model on the dataset.
 
@@ -127,9 +127,91 @@ def Kfold_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, numb
     print(f"The results obtained for the number of latent neurons tested are the following : {results}.")
     print(f"The best average test error obtained is {best_result}, and it is obtained with {best_neuron_number} neurons in the latent layer.")
 
+def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
+    """
+    Perform K-fold cross-validation to .
 
+    Inputs:
+        * dataset (np.array): dataset to perform K-fold cross-validation on 
+        * k_folds (int): number of folds to use for K-fold cross-validation
+        * model (Pytorch neural network): the Pytorch neural network to cross-validate
+        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
+        * criterion (method from nn.Module to estimate the loss): loss to use during training 
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+        * IAEDNIAEIJDNAEJD
+
+    Outputs:
+        * results (np.array): the average test error obtained for each number of neurons 
+        * best_result (float): the best test error obtained
+        *  JKA3DNJKANDJAENDKJ
+    """
     
+    best_result = 100000
+    best_learning_rate = 0
+    best_momentum = 0
+    for momentum in momentums : 
+        for learning_rate in learning_rates :
+            res = Kfold(dataset, k_folds, input_size, epochs, criterion, learning_rate, momentum)
+            if(res < best_result) :
+                best_result = res
+                best_learning_rate = learning_rate
+                best_momentum = momentum
+    return best_result, best_learning_rate, best_momentum
 
+def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates) : #model ??
+    """
+    Perform K-fold cross-validation to .
+
+    Inputs:
+        * dataset (np.array): dataset to perform K-fold cross-validation on 
+        * k_folds (int): number of folds to use for K-fold cross-validation
+        * model (Pytorch neural network): the Pytorch neural network to cross-validate
+        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
+        * criterion (method from nn.Module to estimate the loss): loss to use during training 
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+        * IAEDNIAEIJDNAEJD
+
+    Outputs:
+        * results (np.array): the average test error obtained for each number of neurons 
+        * best_result (float): the best test error obtained
+        *  JKA3DNJKANDJAENDKJ
+    """
+    
+    best_result = 100000
+    best_learning_rate = 0
+    for learning_rate in learning_rates :
+        print('learning rate = ', learning_rate)
+        res = Kfold(dataset, k_folds, input_size, epochs, criterion, learning_rate)
+        if(res < best_result) :
+            best_result = res
+            best_learning_rate = learning_rate
+    print('Best learning rate is ', best_learning_rate, ' with a best error of : ', best_result)
+    return best_result, best_learning_rate
+
+
+def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7) :
+    
+    flattened_array  = cPickle.load(open("data/pickle/"+name, "rb"))
+    flattened_array_train, flattened_array_test = train_test_split(flattened_array, test_size=0.1, random_state=seed)
+    
+    n = flattened_array.shape[1]
+    
+    np.random.seed(seed)
+    # generate random indices
+    indices = np.random.permutation(n)
+    index_split = int(np.floor(ratio * n))
+    train_idx = indices[: index_split]
+    val_idx = indices[index_split:]
+    
+    #Create the DataLoaders
+    train_sampler = SubsetRandomSampler(train_idx)
+    test_sampler = SubsetRandomSampler(val_idx)
+    train_loader = DataLoader(flattened_array_train, batch_size=10, sampler=train_sampler)
+    test_loader = DataLoader(flattened_array_train, batch_size=10, sampler=test_sampler)
+    
+    return n, train_loader, test_loader
+    
+"""
 def tuning(config):
     # Data Setup
     
@@ -171,5 +253,5 @@ def tuning(config):
         if i % 5 == 0:
             # This saves the model to the trial directory
             torch.save(model.state_dict(), "./model.pth")
-            
+"""
 
