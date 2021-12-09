@@ -109,7 +109,7 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
 
 
 
-def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons) : 
+def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, plot=True) : 
     """
     Perform K-fold cross-validation to ?????????.
 
@@ -124,13 +124,25 @@ def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
     """
     results = []
     for neuron in number_neurons :
+        print('\033[1m'+'Number of neurons = ', str(neuron))
+        print('\033[0m')
         res = Kfold(dataset, k_folds, input_size, epochs, criterion, lr, neuron, comment = False)
         results.append(res)
     best_result = np.min(results)
     best_neuron_number = number_neurons[np.argmin(results)]
+    
     print(f"The results obtained for the number of latent neurons tested are the following : {results}.")
     print(f"The best average test error obtained is {best_result}, and it is obtained with {best_neuron_number} neurons in the latent layer.")
-
+    
+    if(plot) :
+        plt.plot(number_neurons, results, 'bo')
+        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons')
+        plt.xlabel('Number of neurons') ; plt.ylabel('Test error')
+        title = 'Average test error on the ' + str(k_folds) + '-fold for different number of neurons'
+        plt.title(title)
+        plt.legend()
+        plt.show()
+    return best_result, best_neuron_number
     
     
 def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
@@ -168,6 +180,8 @@ def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning
     print('Best learning rate is ', best_learning_rate,' with a best momentum of ', best_momentum, ' with a best error of : ', best_result)
     return best_result, best_learning_rate, best_momentum
 
+
+
 def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, plot = True) : #model ??
     """
     Perform K-fold cross-validation to .
@@ -204,10 +218,11 @@ def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, p
     
     if(plot) :
         plt.plot(learning_rates, results, 'bo')
-        plt.plot(best_learning_rate, best_result, 'ro', markersize=8)
+        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate')
         plt.xlabel('Learning rate') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different learning rates'
         plt.title(title)
+        plt.legend()
         plt.show()
         
     return best_result, best_learning_rate
