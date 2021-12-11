@@ -13,6 +13,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader,TensorDataset,random_split,SubsetRandomSampler, ConcatDataset
 from autoencoder import *
+import math
 
 #momentum note used as optimizer = adam
 def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=5, momentum=0.9, comment = True):
@@ -32,11 +33,13 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
         * mean_test_err (float): the average test error obtained during K-fold cross-validation 
     """
     
+    torch.manual_seed(0)
+    
     # define the K-fold Cross Validator
     kfold = KFold(n_splits=k_folds, shuffle=True, random_state = 1)
     foldperf={}
     f_test, f_train = [], []
-    
+
     # iterate through the folds
     for fold, (train_idx,val_idx) in enumerate(kfold.split(np.arange(len(dataset)))):
 
@@ -104,11 +107,11 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
     
     mean_test_err = np.mean(f_test)
     
-    return mean_test_err        
+    return mean_test_err  
 
 
 
-def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, plot=True) : 
+def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, plot=True) : 
     """
     Perform K-fold cross-validation to ?????????.
 
@@ -135,6 +138,8 @@ def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
     
     if(plot) :
         plt.plot(number_neurons, results, 'bo')
+        new_list = range(math.floor(min(number_neurons)), math.ceil(max(number_neurons))+1)
+        plt.xticks(new_list)
         plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons')
         plt.xlabel('Number of neurons') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different number of neurons'
@@ -142,42 +147,6 @@ def tuning_middle_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
         plt.legend()
         plt.show()
     return best_result, best_neuron_number
-    
-    
-def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
-    """
-    Perform K-fold cross-validation to .
-
-    Inputs:
-        * dataset (np.array): dataset to perform K-fold cross-validation on 
-        * k_folds (int): number of folds to use for K-fold cross-validation
-        * model (Pytorch neural network): the Pytorch neural network to cross-validate
-        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
-        * criterion (method from nn.Module to estimate the loss): loss to use during training 
-        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
-        * IAEDNIAEIJDNAEJD
-
-    Outputs:
-        * results (np.array): the average test error obtained for each number of neurons 
-        * best_result (float): the best test error obtained
-        *  JKA3DNJKANDJAENDKJ
-    """
-    
-    best_result = 100000
-    best_learning_rate = 0
-    best_momentum = 0
-    for momentum in momentums : 
-        print('\033[1m'+'Momentum = ', str(momentum))
-        print('\033[0m')
-        for learning_rate in learning_rates :
-            print('\033[1m'+'Learning rate = ', '\033[1m'+str(learning_rate))
-            res = Kfold(dataset, k_folds, input_size, epochs, criterion, learning_rate, momentum, comment = False)
-            if(res < best_result) :
-                best_result = res
-                best_learning_rate = learning_rate
-                best_momentum = momentum
-    print('Best learning rate is ', best_learning_rate,' with a best momentum of ', best_momentum, ' with a best error of : ', best_result)
-    return best_result, best_learning_rate, best_momentum
 
 
 
@@ -227,6 +196,45 @@ def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, p
     return best_result, best_learning_rate
 
 
+
+###########Functions not used############
+
+def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
+    """
+    Perform K-fold cross-validation to .
+
+    Inputs:
+        * dataset (np.array): dataset to perform K-fold cross-validation on 
+        * k_folds (int): number of folds to use for K-fold cross-validation
+        * model (Pytorch neural network): the Pytorch neural network to cross-validate
+        * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
+        * criterion (method from nn.Module to estimate the loss): loss to use during training 
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
+        * IAEDNIAEIJDNAEJD
+
+    Outputs:
+        * results (np.array): the average test error obtained for each number of neurons 
+        * best_result (float): the best test error obtained
+        *  JKA3DNJKANDJAENDKJ
+    """
+    
+    best_result = 100000
+    best_learning_rate = 0
+    best_momentum = 0
+    for momentum in momentums : 
+        print('\033[1m'+'Momentum = ', str(momentum))
+        print('\033[0m')
+        for learning_rate in learning_rates :
+            print('\033[1m'+'Learning rate = ', '\033[1m'+str(learning_rate))
+            res = Kfold(dataset, k_folds, input_size, epochs, criterion, learning_rate, momentum, comment = False)
+            if(res < best_result) :
+                best_result = res
+                best_learning_rate = learning_rate
+                best_momentum = momentum
+    print('Best learning rate is ', best_learning_rate,' with a best momentum of ', best_momentum, ' with a best error of : ', best_result)
+    return best_result, best_learning_rate, best_momentum
+
+
 def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7) :
     
     flattened_array  = cPickle.load(open("data/pickle/"+name, "rb"))
@@ -248,48 +256,4 @@ def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7) :
     test_loader = DataLoader(flattened_array_train, batch_size=10, sampler=test_sampler)
     
     return n, train_loader, test_loader
-    
-"""
-def tuning(config):
-    # Data Setup
-    
-    train_loader = DataLoader(
-        datasets(
-        "flattened_array_train.npy",
-            loader=np.load, 
-        transform=transforms.Compose([
-            transforms.ToTensor()
-        ])),
-        batch_size=18)
-    test_loader = DataLoader(
-        datasets(
-        "flattened_array_test.npy",
-            loader=np.load,
-        transform=transforms.Compose([
-            transforms.ToTensor(),
-        ])),
-        batch_size=18)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # à modulariser avec global? 
-    input_data = 121000
-    criterion = nn.MSELoss() 
-    model = Autoencoder(input_data)
-    model.to(device)
-
-    optimizer = optim.SGD(
-        model.parameters(), lr=config["lr"])
-    
-    for i in range(10):
-        train(input_data, net=model, epochs=config['epochs'], criterion=criterion,optimizer=optimizer)
-        acc = test(model, test_loader)
-
-        # Send the current training result back to Tune
-        tune.report(mean_accuracy=acc)
-
-        if i % 5 == 0:
-            # This saves the model to the trial directory
-            torch.save(model.state_dict(), "./model.pth")
-"""
 
