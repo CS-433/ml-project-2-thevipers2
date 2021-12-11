@@ -276,4 +276,8 @@ def flatten_4d(Ux, Uy, ratios_pts, size=5509):
             flattened_array_all[idx_sim, :, col, :] = sim_y
     
     return flattened_array_all
+
+
+def normalize(data):
+    return (data - np.min(data)) / (np.max(data) - np.min(data))
     
