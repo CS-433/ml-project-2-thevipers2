@@ -150,7 +150,7 @@ def flatten(Ux, Uy, ratios_pts, size=5509):
         * flattened_array_all : final flattened array to dimension (2*Nu*Nt) * Ns
     '''
     
-    # defining index which separetes each simulation with respect to the sampling
+    # defining index which separates each simulation with respect to the sampling
     idx_new_sim = np.int(np.floor(ratios_pts * size))
     
     # defining the arrays where we will seperate the different simulation
@@ -161,7 +161,7 @@ def flatten(Ux, Uy, ratios_pts, size=5509):
     j = 0
     for i in range(np.int(Ux.shape[0]/idx_new_sim)):
         simulation_x.append([Ux[j:j+idx_new_sim,:]])
-        simulation_y.append([Ux[j:j+idx_new_sim,:]])
+        simulation_y.append([Uy[j:j+idx_new_sim,:]])
         j = j + idx_new_sim
     simulation_x = np.array(simulation_x).squeeze()
     simulation_y = np.array(simulation_y).squeeze()
@@ -188,3 +188,47 @@ def flatten(Ux, Uy, ratios_pts, size=5509):
     return flattened_array_all.T
 
 
+def flatten_2d(Ux, Uy, ratios_pts, size=5509):
+    '''
+    Function that flattens the original matrices Ux and Uy into a final array of dimension Ns * (2*Nu) * Nt 
+    Inputs:
+        * Ux : Matrix of velocities along x at different position on the grid and at different time step (2D matrix)
+        * Uy : Matrix of velocities along y at different position on the grid and at different time step (2D matrix)
+        * ratio_pts : # of positions sampled = ratio* # of positions initially
+        * size : # of rows (points) belonging to 1 simulation, in our case 1 simulation = 1 datapoint for our neural networks
+    Outputs:
+        * flattened_array_all : final flattened array to dimension  Ns * (2*Nu) * Nt
+    '''
+    
+    # defining index which separates each simulation with respect to the sampling
+    idx_new_sim = np.int(np.floor(ratios_pts * size))
+    
+    # defining the arrays where we will seperate the different simulation
+    simulation_x = []
+    simulation_y = []
+    
+    # for loop to separate the Ux and Uy simulations 
+    j = 0
+    for i in range(np.int(Ux.shape[0]/idx_new_sim)):
+        simulation_x.append([Ux[j:j+idx_new_sim,:]])
+        simulation_y.append([Uy[j:j+idx_new_sim,:]])
+        j = j + idx_new_sim
+    simulation_x = np.array(simulation_x).squeeze()
+    simulation_y = np.array(simulation_y).squeeze()
+    
+    # initializing the output flattened array
+    flattened_array_all = np.zeros((simulation_x.shape[0],2*simulation_x.shape[1],simulation_x.shape[2]))
+    
+    # for loop to iterate through the simulations
+    for idx_sim in range(simulation_x.shape[0]):
+        sim_x = simulation_x[idx_sim]
+        sim_y = simulation_y[idx_sim]
+        
+        # for loop to iterate through the time steps
+        for col in range(simulation_x.shape[2]):
+            
+            # plug the concatenation of the x and y speed coordinate into the column of the final array
+            flattened_array_all[idx_sim, :, col] = np.concatenate((sim_x[:,col], sim_y[:,col]), axis=0)
+    
+    return flattened_array_all
+    

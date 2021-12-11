@@ -11,7 +11,6 @@ from sklearn.model_selection import KFold
 import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader,TensorDataset,random_split,SubsetRandomSampler, ConcatDataset
 from autoencoder import *
 
