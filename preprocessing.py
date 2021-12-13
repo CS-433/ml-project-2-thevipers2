@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import _pickle as cPickle
 from helpers import *
 
 #Globalement fonctionne parfaitement, seul question niveau interpretation plutôt :
@@ -119,21 +120,25 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) :
     return new_Ux, new_Uy, new_inds
         
 #ATTENTION : marche pas, nen pas utiliser pour l'instant
-def get_samples(Ux, Uy, ratios_pts, ratios_t, size=5509) :
-    
-    ratios_pts.insert(0, 1)
-    ratios_t.insert(0, 1)
-    
-    #Idée : plutot que liste, faire tableau 2D et referer à son voisin direct de gauche si il existe, sinon son voisin du dessus
-    samples_Ux = [Ux]
-    samples_Uy = [Uy]
-    
-    for i in range(1, len(ratios_pts)) :
-        for j in range(1, len(ratios_t)) :
-            new_Ux, new_Uy = sample(samples_Ux, samples_Uy, ratios_pts[i], ratios_t[i], size=samples_Ux.shape[0]*ratio_pts[i-1])
-            samples_Ux.append(new_Ux)
-            samples_Uy.append(new_Uy)
-    return 0 
+def create_subsamples(Ux, Uy, ratios_pts, ratios_t, name_file='very_small', size=5509) :
+    '''
+    Function that subsample the matrix Ux and Uy into different 
+    Inputs:
+        * Ux : Matrix of velocities along x at different position on the grid and at different time step (2D matrix)
+        * Uy : Matrix of velocities along y at different position on the grid and at different time step (2D matrix)
+        * ratios_pts : array of ratio_pts
+        * ratios_t : array of ratio_t
+        * name_file : name of the data file (small, very_small, ...)
+    Outputs:
+        * create a pickle file in the data/pickle folder for each subsampled flattened array
+    '''
+    for i in range(len(ratios_pts)) :
+        for j in range(len(ratios_t)) :
+            new_Ux, new_Uy, _ = sample(Ux, Uy, ratios_pts[i], ratios_t[j])
+            flattened_array_sub = flatten(new_Ux, new_Uy, ratios_pts[i])
+            
+            name = 'processed_'+str(name_file)+'_'+str(ratios_pts[i])+'_'+str(ratios_t[j])
+            cPickle.dump( flattened_array_sub , open( "data/pickle/"+name, "wb" ) )
 
 
 ###########Flattening methods##########
