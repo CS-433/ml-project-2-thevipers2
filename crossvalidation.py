@@ -111,7 +111,7 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
 
 
 
-def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, plot=True) : 
+def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, dataset_name_="very_small", plot=True) : 
     """
     Perform K-fold cross-validation to ?????????.
 
@@ -140,17 +140,18 @@ def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
         plt.plot(number_neurons, results, 'bo')
         new_list = range(math.floor(min(number_neurons)), math.ceil(max(number_neurons))+1)
         plt.xticks(new_list)
-        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons')
+        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons : '+str(best_neuron_number))
         plt.xlabel('Number of neurons') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different number of neurons'
         plt.title(title)
         plt.legend()
+        plt.savefig("Latent_neurons_tuning_"+dataset_name_)
         plt.show()
     return best_result, best_neuron_number
 
 
 
-def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, plot = True) : #model ??
+def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, dataset_name_="very_small", plot = True) : #model ??
     """
     Perform K-fold cross-validation to .
 
@@ -186,13 +187,13 @@ def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, p
     
     if(plot) :
         plt.plot(learning_rates, results, 'bo')
-        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate')
+        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate :'+str(best_learning_rate))
         plt.xlabel('Learning rate') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different learning rates'
         plt.title(title)
         plt.legend()
+        plt.savefig("Learning_rate_tuning_"+dataset_name_)
         plt.show()
-        
     return best_result, best_learning_rate
 
 
