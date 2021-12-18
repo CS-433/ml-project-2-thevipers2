@@ -119,7 +119,6 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) :
     
     return new_Ux, new_Uy, new_inds
         
-#ATTENTION : marche pas, nen pas utiliser pour l'instant
 def create_subsamples(Ux, Uy, ratios_pts, ratios_t, name_file='very_small', size=5509) :
     '''
     Function that subsample the matrix Ux and Uy into different 

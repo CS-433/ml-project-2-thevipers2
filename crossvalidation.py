@@ -14,6 +14,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader,TensorDataset,random_split,SubsetRandomSampler, ConcatDataset
 from autoencoder import *
 import math
+from os import linesep as endl
 
 #momentum note used as optimizer = adam
 def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=5, momentum=0.9, comment = True):
@@ -140,7 +141,7 @@ def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
         plt.plot(number_neurons, results, 'bo')
         new_list = range(math.floor(min(number_neurons)), math.ceil(max(number_neurons))+1)
         plt.xticks(new_list)
-        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons : '+str(best_neuron_number))
+        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons : '+str(best_neuron_number)+endl +'error : ' + str(round(best_result, 3)))
         plt.xlabel('Number of neurons') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different number of neurons'
         plt.title(title)
@@ -187,7 +188,7 @@ def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, d
     
     if(plot) :
         plt.plot(learning_rates, results, 'bo')
-        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate :'+str(best_learning_rate))
+        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate :'+str(best_learning_rate)+ endl +'error : ' + str(round(best_result, 3)))
         plt.xlabel('Learning rate') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different learning rates'
         plt.title(title)
