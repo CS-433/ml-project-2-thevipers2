@@ -55,11 +55,11 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
         # sample the elements from train_idx and from val_idx and then we convert these samplers into DataLoader objects
         train_sampler = SubsetRandomSampler(train_idx)
         test_sampler = SubsetRandomSampler(val_idx)
-        train_loader = DataLoader(dataset, batch_size=10, sampler=train_sampler)
-        test_loader = DataLoader(dataset, batch_size=10, sampler=test_sampler)
+        train_loader = DataLoader(dataset, batch_size=20, sampler=train_sampler)
+        test_loader = DataLoader(dataset, batch_size=20, sampler=test_sampler)
         # initialize the dictionary and the array to store the errors
         history = {'train_error': [], 'test_error': []}
-
+        
         # loop over the epochs
         for epoch in range(epochs):
             # train the model 
@@ -114,7 +114,7 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
 
 def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, dataset_name_="very_small", plot=True) : 
     """
-    Perform K-fold cross-validation to ?????????.
+    Perform K-fold cross-validation to find the best number of neurons in the latent space.
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
@@ -123,7 +123,9 @@ def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * learningRate (float): learning rate 
         * number_neurons (np.array): the different number of neurons in the latent layer we want to test 
-
+    OUTPUTS:
+        * best_result (float): the best test error obtained
+        * best_neuron_number (int) : number of neurons in the latent space that gives the best test error
     """
     results = []
     for neuron in number_neurons :
@@ -154,21 +156,19 @@ def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
 
 def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, dataset_name_="very_small", plot = True) : #model ??
     """
-    Perform K-fold cross-validation to .
+    Perform K-fold cross-validation to find the best learning rate of our model.
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
         * k_folds (int): number of folds to use for K-fold cross-validation
-        * model (Pytorch neural network): the Pytorch neural network to cross-validate
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
-        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
-        * IAEDNIAEIJDNAEJD
+        * learning_rates :
+        *
 
     Outputs:
-        * results (np.array): the average test error obtained for each number of neurons 
         * best_result (float): the best test error obtained
-        *  JKA3DNJKANDJAENDKJ
+        * best_learning_rate (float) : learning rate that gives the best test error
     """
     
     best_result = 100000
