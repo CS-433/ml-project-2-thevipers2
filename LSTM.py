@@ -139,11 +139,13 @@ def relative_error_lstm(y, y_pred) :
     """
     
     sum = 0
+    i = 0
     for idx, y_val in enumerate(y):
         for idx_2, y_one in enumerate(y_val):
-            sum += np.linalg.norm((y_one-y_pred[idx][idx_2]), 2)**2/np.linalg.norm(y_one,2)**2
+            sum += np.linalg.norm((y_one-y_pred[idx][idx_2]), 2)**2/(np.linalg.norm(y_one,2)**2)
+            i += 1
             
-    rel_err = sum/ len(y)
+    rel_err = sum / (i)
     return rel_err
     
 
