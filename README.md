@@ -4,7 +4,7 @@
 
 ## General information 
 
-The repository contains the code for Machine Learning course 2021 (CS-433) ML4Science project 2 at EPFL. Our project is based on the paper [1] J. Bonnemain, M. Zeller, L. Pegolotti, S. Deparis, and L. Liaudet, “Deep Neural Network to Accurately Predict Left Ventricular Systolic Function Under Mechanical Assistance,” Front. Cardiovasc. Med., vol. 8, no. October, pp. 1–9, 2021, doi: 10.3389/fcvm.2021.752088.   
+The repository contains the code for Machine Learning course 2021 (CS-433) ML4Science project 2 at EPFL. Our project is based on the paper _[[1](https://doi.org/10.3389/fcvm.2021.752088)] J. Bonnemain, M. Zeller, L. Pegolotti, S. Deparis, and L. Liaudet, “Deep Neural Network to Accurately Predict Left Ventricular Systolic Function Under Mechanical Assistance,” Front. Cardiovasc. Med., vol. 8, no. October, pp. 1–9, 2021, doi: 10.3389/fcvm.2021.752088_.   
 
 The present project aims to investigate the mathematical model solutions of blood flow inside an arterial bifurcation in the presence of a stenosis. 
 
