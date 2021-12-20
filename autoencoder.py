@@ -80,8 +80,8 @@ def train_epoch(input_data, net, criterion, optimizer) :
         optimizer.step()
         # update loss
         train_loss +=loss.item()
-        
-    return train_loss    
+    
+    return train_loss
 
     
 def valid_epoch(test_data, net):
