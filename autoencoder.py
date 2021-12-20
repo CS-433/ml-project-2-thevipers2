@@ -45,8 +45,10 @@ class Autoencoder(nn.Module) :
         nn.ReLU(True)
         )
         
-    def forward(self,x) : 
+    def forward(self,x, show_compression=False) : 
         x = self.encoder(x)
+        if(show_compression) :
+            return x
         x = self.decoder(x)
         return x
 
