@@ -119,7 +119,7 @@ def sample(Ux, Uy, ratio_pts, ratio_t, size=5509) :
     
     return new_Ux, new_Uy, new_inds
         
-def create_subsamples(Ux, Uy, ratios_pts, ratios_t, name_file='very_small', size=5509) :
+def create_subsamples(Ux, Uy, ratios_pts, ratios_t, name_file='very_small', size=5509, lstm=False) :
     '''
     Function that subsample the matrix Ux and Uy into different 
     Inputs:
@@ -134,7 +134,10 @@ def create_subsamples(Ux, Uy, ratios_pts, ratios_t, name_file='very_small', size
     for i in range(len(ratios_pts)) :
         for j in range(len(ratios_t)) :
             new_Ux, new_Uy, _ = sample(Ux, Uy, ratios_pts[i], ratios_t[j])
-            flattened_array_sub = flatten(new_Ux, new_Uy, ratios_pts[i])
+            if lstm:
+                flattened_array_sub = flatten_2d(new_Ux, new_Uy, ratios_pts[i])
+            else:
+                flattened_array_sub = flatten(new_Ux, new_Uy, ratios_pts[i])
             
             name = 'processed_'+str(name_file)+'_'+str(ratios_pts[i])+'_'+str(ratios_t[j])
             cPickle.dump( flattened_array_sub , open( "data/pickle/"+name, "wb" ) )
