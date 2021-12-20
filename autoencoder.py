@@ -16,33 +16,21 @@ class Autoencoder(nn.Module) :
         # encoder network architecture
         self.encoder = nn.Sequential(
         nn.Linear(input_size, 256),
-        nn.ReLU(True),
-        nn.Linear(256, 128),
-        nn.ReLU(True),   
+        nn.Linear(256, 128), 
         nn.Linear(128, 64),
-        nn.ReLU(True),
         nn.Linear(64, 32),
-        nn.ReLU(True), 
-        nn.Linear(32, 16),
-        nn.ReLU(True), 
-        nn.Linear(16, neuron),
-        nn.ReLU(True) 
+        nn.Linear(32, 16), 
+        nn.Linear(16, neuron)
         )
         
         # decoder network architecture
         self.decoder = nn.Sequential(
         nn.Linear(neuron, 16),
-        nn.ReLU(True),
         nn.Linear(16, 32),
-        nn.ReLU(True),
         nn.Linear(32, 64),
-        nn.ReLU(True),
         nn.Linear(64, 128),
-        nn.ReLU(True),
         nn.Linear(128, 256),
-        nn.ReLU(True),
-        nn.Linear(256, input_size),
-        nn.ReLU(True)
+        nn.Linear(256, input_size)
         )
         
     def forward(self,x, show_compression=False) : 
