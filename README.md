@@ -6,7 +6,7 @@
 
 The repository contains the code for Machine Learning course (CS-433) 2021 for the __ML4Science__ project 2 at EPFL. Our project aims at investigating the relationship between classical numerical methods and deep-learning techniques, with the final purpose of efficiently providing accurate solutions to parametrized PDE problems, being fully unaware of the values of the characteristic parameters. The professor's Deparis lab has developed efficient numerical methods for the resolution of parametrized time-dependent PDEs. In the following, we develop deep-learning models that take advantage of these numerical methods to solve parametrized unsteady PDEs without any knowledge of the characteristic parameters. 
 
-In this work we make progress to this end by proposing deep-learning approaches to identify and evolve a __low-dimensional__ representation of a spatiotemporal system. In particular, we employ _Feed-Forward AEs_ and _Long short-term memory AEs_, or LSTM AEs, to learn an optimal low-dimensional representation of the full state of the system. We use _Pytorch_ for their implementation.
+In this work we make progress to this end by proposing deep-learning approaches to identify and evolve a __low-dimensional__ representation of a spatiotemporal system. In particular, we employ PyTorch _Feed-Forward AEs_ and _Long short-term memory AEs_, or LSTM AEs, to learn an optimal low-dimensional representation of the full state of the system.
 
 ### Team members
 The project is accomplished by the team `TheVipers` with members:
@@ -32,6 +32,8 @@ The data simulator generetes 4 files:
 The project has been developed and tested with `python3.8`.
 The required library for running the models and training is `numpy1.20.1`.
 The library for visualization is `matplotlib3.3.4`.
+The library for autoencoder implementation is `pytorch1.10.0`. 
+Annex libraries used are `pandas`, `sklearn` and `_pickle`.
 
 ### How to reproduce the obtained results
 
