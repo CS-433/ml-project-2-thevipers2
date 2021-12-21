@@ -4,6 +4,7 @@ Cross-validation code.
 """
 import numpy as np 
 import matplotlib.pyplot as plt
+import pandas as pd
 import torch                                            
 from torch import nn                       
 from torch.autograd import Variable 
@@ -17,8 +18,8 @@ import math
 from os import linesep as endl
 
 #momentum note used as optimizer = adam
-def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hidden_size, neuron=5, momentum=0.9, comment = True):
-    """
+def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hidden_size, momentum=0.9, comment = True):
+    """ 
     Perform K-fold cross-validation to estimate the train and test error of the model on the dataset.
 
     Inputs:
@@ -28,7 +29,7 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * learningRate (float): learning rate 
-        * neuron (int): number of neurons in the latent layer
+        * hidden_size (int): number of features in the LSTM hidden state translating to the number of neurons in the latent layer
 
     Outputs:
         * mean_test_err (float): the average test error obtained during K-fold cross-validation 
@@ -43,12 +44,11 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
 
     # iterate through the folds
     for fold, (train_idx,val_idx) in enumerate(kfold.split(np.arange(len(dataset)))):
-        
         # define the model
         model = LSTMAE(input_size, hidden_size)
-        optimizer = torch.optim.Adam(model.parameters(), lr=learningRate, weight_decay=1e-5)
+        optimizer = torch.optim.SGD(model.parameters(), lr=learningRate, momentum=momentum, weight_decay=1e-5)
         # print
-        if(comment) :
+        if(comment):
             print('--------------------------------')
             print(f'FOLD {fold}')
             print('--------------------------------')
@@ -69,7 +69,7 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
             # compute the relative test error
             test_error=valid_epoch_lstm(test_loader,model)
             
-            if(comment) :
+            if(comment):
                 print("Epoch:{}/{} Training Error:{:.3f} Test Error:{:.3f}".format(epoch + 1,epochs,train_error,test_error))
             history['train_error'].append(train_error)
             history['test_error'].append(test_error)
@@ -94,7 +94,7 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
           diz_ep['train_error_ep'].append(np.mean([foldperf['fold{}'.format(f+1)]['train_error'][i] for f in range(k_folds)]))
           diz_ep['test_error_ep'].append(np.mean([foldperf['fold{}'.format(f+1)]['test_error'][i] for f in range(k_folds)]))
     
-    if(comment) :
+    if(comment):
         # Plot training and test relative errors
         plt.figure(figsize=(10,8))
         plt.semilogy(diz_ep['train_error_ep'], label='Train')
@@ -112,7 +112,7 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
 
 
 
-def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, hidden_size, dataset_name_="very_small", plot=True) : 
+def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, dataset_name_="very_small", plot=True): 
     """
     Perform K-fold cross-validation to ?????????.
 
@@ -122,26 +122,26 @@ def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * learningRate (float): learning rate 
-        * number_neurons (np.array): the different number of neurons in the latent layer we want to test 
+        * number_neurons (np.array): the different number of neurons in the latent layer we want to test tranlating to the number of features in the LSTM hidden state 
 
     """
     results = []
-    for neuron in number_neurons :
+    for neuron in number_neurons:
         print('\033[1m'+'Number of neurons = ', str(neuron))
         print('\033[0m')
-        res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, lr, hidden_size,neuron, comment = False)
+        res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, lr, neuron, comment = False)
         results.append(res)
     best_result = np.min(results)
     best_neuron_number = number_neurons[np.argmin(results)]
     
-    print(f"The results obtained for the number of latent neurons tested are the following : {results}.")
+    print(f"The results obtained for the number of latent neurons tested are the following: {results}.")
     print(f"The best average test error obtained is {best_result}, and it is obtained with {best_neuron_number} neurons in the latent layer.")
     
-    if(plot) :
+    if(plot):
         plt.plot(number_neurons, results, 'bo')
         new_list = range(math.floor(min(number_neurons)), math.ceil(max(number_neurons))+1)
         plt.xticks(new_list)
-        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons : '+str(best_neuron_number)+endl +'error : ' + str(round(best_result, 3)))
+        plt.plot(best_neuron_number, best_result, 'ro', markersize=8, label = 'Best number of neurons: '+str(best_neuron_number)+endl +'error: ' + str(round(best_result, 3)))
         plt.xlabel('Number of neurons') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different number of neurons'
         plt.title(title)
@@ -152,7 +152,7 @@ def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr
 
 
 
-def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, dataset_name_="very_small", plot = True) : #model ??
+def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, dataset_name_="very_small", plot = True): #model ??
     """
     Perform K-fold cross-validation to .
 
@@ -166,32 +166,32 @@ def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rat
         * IAEDNIAEIJDNAEJD
 
     Outputs:
-        * results (np.array): the average test error obtained for each number of neurons 
         * best_result (float): the best test error obtained
-        *  JKA3DNJKANDJAENDKJ
+        * best_learning_rate(int): best learning rate found after cross-validation
     """
     
     best_result = 100000
     best_learning_rate = 0
     results = []
-    for learning_rate in learning_rates :
+    for learning_rate in learning_rates:
         print('\033[1m'+'Learning rate = ', str(learning_rate))
         print('\033[0m')
         res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rate, hidden_size, comment = False)
         results.append(res)
-        if(res < best_result) :
+        if(res < best_result):
             best_result = res
             best_learning_rate = learning_rate
     print('\033[0m')
-    print('Best learning rate is ', best_learning_rate, ' with a best error of : ', best_result)
+    print('Best learning rate is ', best_learning_rate, ' with a best error of: ', best_result)
     print('\033[0m')
     
-    if(plot) :
+    if(plot):
         plt.plot(learning_rates, results, 'bo')
-        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate :'+str(best_learning_rate)+ endl +'error : ' + str(round(best_result, 3)))
+        plt.plot(best_learning_rate, best_result, 'ro', markersize=8, label = 'Best learning rate:'+str(best_learning_rate)+ endl +'error: ' + str(round(best_result, 3)))
         plt.xlabel('Learning rate') ; plt.ylabel('Test error')
         title = 'Average test error on the ' + str(k_folds) + '-fold for different learning rates'
         plt.title(title)
+        plt.xscale("log")
         plt.legend()
         plt.savefig("Learning_rate_tuning_"+dataset_name_)
         plt.show()
@@ -201,7 +201,7 @@ def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rat
 
 ###########Functions not used############
 
-def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
+def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, momentums, dataset_name_="very_small", plot = True): #model ??
     """
     Perform K-fold cross-validation to .
 
@@ -217,27 +217,40 @@ def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, lea
     Outputs:
         * results (np.array): the average test error obtained for each number of neurons 
         * best_result (float): the best test error obtained
-        *  JKA3DNJKANDJAENDKJ
+        * best_learning_rate(int): best learning rate found after cross-validation
+        * best_momentum(int): best momentum found after cross-validation
     """
     
     best_result = 100000
     best_learning_rate = 0
     best_momentum = 0
-    for momentum in momentums : 
+    results = []
+    for momentum in momentums: 
         print('\033[1m'+'Momentum = ', str(momentum))
         print('\033[0m')
-        for learning_rate in learning_rates :
+        for learning_rate in learning_rates:
             print('\033[1m'+'Learning rate = ', '\033[1m'+str(learning_rate))
-            res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rate, momentum, comment = False)
-            if(res < best_result) :
+            print('\033[0m')
+            res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rate, hidden_size,momentum, comment = False)
+            results.append(res)
+            if(res < best_result):
                 best_result = res
                 best_learning_rate = learning_rate
                 best_momentum = momentum
-    print('Best learning rate is ', best_learning_rate,' with a best momentum of ', best_momentum, ' with a best error of : ', best_result)
-    return best_result, best_learning_rate, best_momentum
+    
+    
+    if(plot):
+        df = pd.DataFrame(data=np.array(results).reshape((len(momentums),len(learning_rates))), index=['lr='+str(x) for x in learning_rates], columns=['m='+str(x) for x in momentums]) 
+        display(df)
+        
+    print('\033[0m')
+    print('Best learning rate is', best_learning_rate,' with a best momentum of', best_momentum, 'with a best error of: ', best_result)
+    print('\033[0m')
+    
+    return results, best_result, best_learning_rate, best_momentum
 
 
-def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7) :
+def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7):
     
     flattened_array = cPickle.load(open("data/pickle/"+name, "rb"))
     flattened_array_train, flattened_array_test = train_test_split(flattened_array, test_size=0.1, random_state=seed)

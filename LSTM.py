@@ -7,7 +7,69 @@ import matplotlib.pyplot as plt
 import torch                                            
 from torch import nn                       
 from torch.autograd import Variable 
+      
+# Encoder Class
+class Encoder(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(Encoder, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+
+        self.lstm_encoder_1 = nn.LSTM(input_size=input_size, hidden_size=48, batch_first=True)
+        self.lstm_encoder_2 = nn.LSTM(input_size=48, hidden_size=32, batch_first=True)
+        self.lstm_encoder_3 = nn.LSTM(input_size=32, hidden_size=hidden_size, batch_first=True)
         
+
+    def forward(self, x):
+        x, (_, _) = self.lstm_encoder_1(x)
+        x, (_, _) = self.lstm_encoder_2(x)
+        out, (last_h_state, last_c_state) = self.lstm_encoder_3(x)
+        x_enc = last_h_state.squeeze(dim=0)
+        x_enc = x_enc.unsqueeze(1).repeat(1, x.shape[1], 1)
+        return x_enc, out
+        
+
+
+# Decoder Class
+class Decoder(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(Decoder, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+
+        self.lstm_decoder_1 = nn.LSTM(input_size=hidden_size, hidden_size=32, batch_first=True)
+        self.lstm_decoder_2 = nn.LSTM(input_size=32, hidden_size=48, batch_first=True)
+        self.lstm_decoder_3 = nn.LSTM(input_size=48, hidden_size=input_size, batch_first=True)
+        
+
+    def forward(self, z):
+        # z = z.unsqueeze(1).repeat(1, self.seq_len, 1)
+        z, (_, _) = self.lstm_decoder_1(z)
+        z, (_, _) = self.lstm_decoder_2(z)
+        dec_out, (hidden_state, cell_state) = self.lstm_decoder_3(z)
+        return dec_out, hidden_state
+
+
+# LSTM Auto-Encoder Class
+class LSTMAE(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+
+        self.encoder = Encoder(input_size=input_size, hidden_size=hidden_size)
+        self.decoder = Decoder(input_size=input_size, hidden_size=hidden_size)
+
+    def forward(self, x, return_last_h=False, return_enc_out=False):
+        x_enc, enc_out = self.encoder(x)
+        x_dec, last_h = self.decoder(x_enc)
+
+        if return_last_h:
+            return x_dec, last_h
+        elif return_enc_out:
+            return x_dec, enc_out
+        return x_dec 
+'''
 # Encoder Class
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -18,6 +80,7 @@ class Encoder(nn.Module):
         self.lstm_encoder = nn.LSTM(input_size=input_size, hidden_size=hidden_size, batch_first=True)
 
     def forward(self, x):
+        print(x.size())
         out, (last_h_state, last_c_state) = self.lstm_encoder(x)
         x_enc = last_h_state.squeeze(dim=0)
         x_enc = x_enc.unsqueeze(1).repeat(1, x.shape[1], 1)
@@ -53,6 +116,7 @@ class LSTMAE(nn.Module):
         self.decoder = Decoder(input_size=input_size, hidden_size=hidden_size)
 
     def forward(self, x, return_last_h=False, return_enc_out=False):
+        print(x.size())
         x_enc, enc_out = self.encoder(x)
         x_dec, last_h = self.decoder(x_enc)
 
@@ -61,9 +125,8 @@ class LSTMAE(nn.Module):
         elif return_enc_out:
             return x_dec, enc_out
         return x_dec 
-    
  
-    
+    '''  
     
 def train_epoch_lstm(input_data, net, criterion, optimizer) :
     """
