@@ -53,10 +53,10 @@ def Kfold(dataset, k_folds, input_size, epochs, criterion, learningRate, neuron=
             print(f'FOLD {fold}')
             print('--------------------------------')
         # sample the elements from train_idx and from val_idx and then we convert these samplers into DataLoader objects
-        train_sampler = SubsetRandomSampler(train_idx)
-        test_sampler = SubsetRandomSampler(val_idx)
-        train_loader = DataLoader(dataset, batch_size=20, sampler=train_sampler)
-        test_loader = DataLoader(dataset, batch_size=20, sampler=test_sampler)
+       # train_sampler = SubsetRandomSampler(train_idx)
+        #test_sampler = SubsetRandomSampler(val_idx)
+        train_loader = DataLoader(dataset, batch_size=20, sampler=train_idx)
+        test_loader = DataLoader(dataset, batch_size=20, sampler=val_idx)
         # initialize the dictionary and the array to store the errors
         history = {'train_error': [], 'test_error': []}
         
