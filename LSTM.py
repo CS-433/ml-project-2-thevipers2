@@ -80,7 +80,6 @@ class Encoder(nn.Module):
         self.lstm_encoder = nn.LSTM(input_size=input_size, hidden_size=hidden_size, batch_first=True)
 
     def forward(self, x):
-        print(x.size())
         out, (last_h_state, last_c_state) = self.lstm_encoder(x)
         x_enc = last_h_state.squeeze(dim=0)
         x_enc = x_enc.unsqueeze(1).repeat(1, x.shape[1], 1)
@@ -116,7 +115,6 @@ class LSTMAE(nn.Module):
         self.decoder = Decoder(input_size=input_size, hidden_size=hidden_size)
 
     def forward(self, x, return_last_h=False, return_enc_out=False):
-        print(x.size())
         x_enc, enc_out = self.encoder(x)
         x_dec, last_h = self.decoder(x_enc)
 
@@ -126,7 +124,7 @@ class LSTMAE(nn.Module):
             return x_dec, enc_out
         return x_dec 
  
-    '''  
+'''     
     
 def train_epoch_lstm(input_data, net, criterion, optimizer) :
     """
