@@ -8,6 +8,7 @@ import torch
 from torch import nn                       
 from torch.autograd import Variable 
       
+    
 # Encoder Class
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -123,8 +124,7 @@ class LSTMAE(nn.Module):
         elif return_enc_out:
             return x_dec, enc_out
         return x_dec 
- 
-'''     
+'''      
     
 def train_epoch_lstm(input_data, net, criterion, optimizer) :
     """
