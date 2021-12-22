@@ -79,7 +79,7 @@ And the final results are saved in: ...
 
 ### Feed-forward AE
 
-The feed-forward AE consists of fully-connected linear layers stacked on top of each other. The input size - which is the same as the output size - depends on the sampling which is applied on time and space. Different latent sizes are tested during the training state in `main.ipynb`.
+The feed-forward AE consists of fully-connected linear layers stacked on top of each other. The input size - which is the same as the output size - depends on the sampling which is applied on time and space. Different latent sizes are tested during the training in `main.ipynb`.
 
 <p align="center">
   <img src="/img/Architecture.png" alt="Feed_Architecture" width="500"/>
