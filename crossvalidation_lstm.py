@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Cross-validation code.
+Cross-validation code for LSTM model.
 """
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -17,10 +17,10 @@ from LSTM import *
 import math
 from os import linesep as endl
 
-#momentum note used as optimizer = adam
+
 def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hidden_size, momentum=0.9, comment = True):
     """ 
-    Perform K-fold cross-validation to estimate the train and test error of the model on the dataset.
+    Perform K-fold cross-validation to estimate the train and test error of the LSTM model on the dataset.
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
@@ -30,6 +30,8 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * learningRate (float): learning rate 
         * hidden_size (int): number of features in the LSTM hidden state translating to the number of neurons in the latent layer
+        * momentum (float): momentum for the SGD optimizer 
+        * comment (boolean): True to show graphs of training and test error in function of epochs number
 
     Outputs:
         * mean_test_err (float): the average test error obtained during K-fold cross-validation 
@@ -52,11 +54,11 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
             print('--------------------------------')
             print(f'FOLD {fold}')
             print('--------------------------------')
+            
         # sample the elements from train_idx and from val_idx and then we convert these samplers into DataLoader objects
-        #train_sampler = SubsetRandomSampler(train_idx)
-        #test_sampler = SubsetRandomSampler(val_idx)
         train_loader = DataLoader(dataset, batch_size=10, sampler=train_idx)
         test_loader = DataLoader(dataset, batch_size=10, sampler=val_idx)
+        
         # initialize the dictionary and the array to store the errors
         history = {'train_error': [], 'test_error': []}
 
@@ -112,9 +114,9 @@ def Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, learningRate, hi
 
 
 
-def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, dataset_name_="very_small", plot=True): 
+def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr, number_neurons, momentum=0.9,dataset_name_="very_small", plot=True): 
     """
-    Perform K-fold cross-validation to ?????????.
+    Perform K-fold cross-validation to find best number of latent neurons of the LSTM autoencoder.
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
@@ -122,14 +124,19 @@ def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * learningRate (float): learning rate 
-        * number_neurons (np.array): the different number of neurons in the latent layer we want to test tranlating to the number of features in the LSTM hidden state 
-
+        * number_neurons (np.array): the different number of neurons in the latent layer we want to test tranlating to the number of features in the 3rd LSTM layer hidden state 
+        * momentum (float): momentum for the SGD optimizer 
+        * dataset_name (string): dataset name used to save the final plot 
+        * plot (boolean): True to show graphs of test error in function of the number of neurons 
+    Outputs:
+        * best_result (float): best test error
+        * best_neuron_number (int): best neuron in the latent layer tranlating to the number of features in the 3rd LSTM layer hidden state 
     """
     results = []
     for neuron in number_neurons:
         print('\033[1m'+'Number of neurons = ', str(neuron))
         print('\033[0m')
-        res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, lr, neuron, comment = False)
+        res = Kfold_lstm(dataset, k_folds, input_size, epochs, criterion, lr, neuron, momentum,comment = False)
         results.append(res)
     best_result = np.min(results)
     best_neuron_number = number_neurons[np.argmin(results)]
@@ -152,9 +159,9 @@ def tuning_latent_layer_lstm(dataset, k_folds, input_size, epochs, criterion, lr
 
 
 
-def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, dataset_name_="very_small", plot = True): #model ??
+def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, momentum=0.9,dataset_name_="very_small", plot = True): 
     """
-    Perform K-fold cross-validation to .
+    Perform K-fold cross-validation to find the best learning rate in the LSTM model optimizer (SGD in our case).
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
@@ -162,12 +169,16 @@ def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rat
         * model (Pytorch neural network): the Pytorch neural network to cross-validate
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
-        * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
-        * IAEDNIAEIJDNAEJD
+        * optimizer (optimizer from torch.optim): optimization algorithm to use during training
+        * learning_rates (list): learning rates to tune for the optimizer
+        * hidden_size (int): number of features in the LSTM hidden state translating to the number of neurons in the latent layer
+        * momentum (float): momentum for the SGD optimizer 
+        * dataset_name (string): dataset name used to save the final plot 
+        * plot (boolean): True to show graphs of test error in function of the learning rate (in log space)
 
     Outputs:
         * best_result (float): the best test error obtained
-        * best_learning_rate(int): best learning rate found after cross-validation
+        * best_learning_rate (int): best learning rate found after cross-validation
     """
     
     best_result = 100000
@@ -199,11 +210,9 @@ def tuning_lr_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rat
 
 
 
-###########Functions not used############
-
-def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, momentums, dataset_name_="very_small", plot = True): #model ??
+def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, learning_rates, hidden_size, momentums, dataset_name_="very_small", plot = True):
     """
-    Perform K-fold cross-validation to .
+    Perform K-fold cross-validation to find simultaneously best learning rate and 
 
     Inputs:
         * dataset (np.array): dataset to perform K-fold cross-validation on 
@@ -212,13 +221,17 @@ def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, lea
         * epochs (int): number of complete cycles through the entire dataset the neural network completes during training
         * criterion (method from nn.Module to estimate the loss): loss to use during training 
         * optimizer (optimizer from torch.optim): optimization algorithm to use during training 
-        * IAEDNIAEIJDNAEJD
+        * learning_rates (list): learning rates to tune for the optimizer
+        * hidden_size (int): number of features in the LSTM hidden state translating to the number of neurons in the latent layer
+        * momentums (list): momentums to tune for the SGD optimizer 
+        * dataset_name (string): dataset name used to save the final plot 
+        * plot (boolean): True to show 2D table of learning rates and momentums with all the test errors 
 
     Outputs:
         * results (np.array): the average test error obtained for each number of neurons 
         * best_result (float): the best test error obtained
-        * best_learning_rate(int): best learning rate found after cross-validation
-        * best_momentum(int): best momentum found after cross-validation
+        * best_learning_rate (int): best learning rate found after cross-validation
+        * best_momentum (int): best momentum found after cross-validation
     """
     
     best_result = 100000
@@ -250,25 +263,4 @@ def tuning_lr_momentum_lstm(dataset, k_folds, input_size, epochs, criterion, lea
     return results, best_result, best_learning_rate, best_momentum
 
 
-def get_data_loaders(name = 'processed_very_small_0.1_1', seed=1, ratio= 0.7):
-    
-    flattened_array = cPickle.load(open("data/pickle/"+name, "rb"))
-    flattened_array_train, flattened_array_test = train_test_split(flattened_array, test_size=0.1, random_state=seed)
-    
-    n = flattened_array.shape[1]
-    
-    np.random.seed(seed)
-    # generate random indices
-    indices = np.random.permutation(n)
-    index_split = int(np.floor(ratio * n))
-    train_idx = indices[: index_split]
-    val_idx = indices[index_split:]
-    
-    #Create the DataLoaders
-    train_sampler = SubsetRandomSampler(train_idx)
-    test_sampler = SubsetRandomSampler(val_idx)
-    train_loader = DataLoader(flattened_array_train, batch_size=10, sampler=train_sampler)
-    test_loader = DataLoader(flattened_array_train, batch_size=10, sampler=test_sampler)
-    
-    return n, train_loader, test_loader
 

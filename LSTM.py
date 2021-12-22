@@ -12,6 +12,12 @@ from torch.autograd import Variable
 # Encoder Class
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size):
+        """
+        Encoder initialisation.
+        Inputs:
+            * input_size (int): the number of expected features in the input x, corresponds to time-steps of the input matrices
+            * hidden_size (int): the number of features in the hidden state h, also translate to the number of neurons on our latent layer in our case 
+        """
         super(Encoder, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -22,6 +28,14 @@ class Encoder(nn.Module):
         
 
     def forward(self, x):
+        """
+        Run forward computation.
+        Inputs:
+            * x (torch.Tensor): tensor of input data
+        Outputs: 
+            * x_enc (torch.Tensor): final hidden state 
+            * out (torch.Tensor): final output
+        """
         x, (_, _) = self.lstm_encoder_1(x)
         x, (_, _) = self.lstm_encoder_2(x)
         out, (last_h_state, last_c_state) = self.lstm_encoder_3(x)
@@ -34,6 +48,12 @@ class Encoder(nn.Module):
 # Decoder Class
 class Decoder(nn.Module):
     def __init__(self, input_size, hidden_size):
+        """
+        Decoder initialisation.
+        Inputs:
+            * input_size : the number of expected features in the input x, corresponds to time-steps of the input matrices
+            * hidden_size : the number of features in the hidden state h, also translate to the number of neurons on our latent layer in our case 
+        """
         super(Decoder, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -44,6 +64,14 @@ class Decoder(nn.Module):
         
 
     def forward(self, z):
+        """
+        Run forward computation.
+        Inputs:
+            * z (torch.Tensor): tensor of input data
+        Outputs: 
+            * hidden_state (torch.Tensor): final hidden state 
+            * dec_out (torch.Tensor): final output
+        """
         # z = z.unsqueeze(1).repeat(1, self.seq_len, 1)
         z, (_, _) = self.lstm_decoder_1(z)
         z, (_, _) = self.lstm_decoder_2(z)
@@ -54,6 +82,12 @@ class Decoder(nn.Module):
 # LSTM Auto-Encoder Class
 class LSTMAE(nn.Module):
     def __init__(self, input_size, hidden_size):
+        """
+        Model initialisation.
+        Inputs:
+            * input_size : the number of expected features in the input x, corresponds to time-steps of the input matrices
+            * hidden_size : the number of features in the hidden state h, also translate to the number of neurons on our latent layer in our case 
+        """
         super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -62,6 +96,15 @@ class LSTMAE(nn.Module):
         self.decoder = Decoder(input_size=input_size, hidden_size=hidden_size)
 
     def forward(self, x, return_last_h=False, return_enc_out=False):
+        """
+        Run forward computation.
+        Inputs:
+            * x (torch.Tensor): tensor of input data
+            * return_last_h (boolean): true to return final hidden state
+            * return_enc_out (boolean): true to return final cell state 
+        Outputs: 
+            * x_dec (torch.Tensor): final output
+        """
         x_enc, enc_out = self.encoder(x)
         x_dec, last_h = self.decoder(x_enc)
 
@@ -70,65 +113,11 @@ class LSTMAE(nn.Module):
         elif return_enc_out:
             return x_dec, enc_out
         return x_dec 
-'''
-# Encoder Class
-class Encoder(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(Encoder, self).__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-
-        self.lstm_encoder = nn.LSTM(input_size=input_size, hidden_size=hidden_size, batch_first=True)
-
-    def forward(self, x):
-        out, (last_h_state, last_c_state) = self.lstm_encoder(x)
-        x_enc = last_h_state.squeeze(dim=0)
-        x_enc = x_enc.unsqueeze(1).repeat(1, x.shape[1], 1)
-        return x_enc, out
-
-
-# Decoder Class
-class Decoder(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(Decoder, self).__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-
-        self.lstm_decoder = nn.LSTM(input_size=hidden_size, hidden_size=hidden_size, batch_first=True)
-        self.fc = nn.Linear(hidden_size, input_size)
-
-    def forward(self, z):
-        # z = z.unsqueeze(1).repeat(1, self.seq_len, 1)
-        dec_out, (hidden_state, cell_state) = self.lstm_decoder(z)
-        dec_out = self.fc(dec_out)
-
-        return dec_out, hidden_state
-
-
-# LSTM Auto-Encoder Class
-class LSTMAE(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super().__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-
-        self.encoder = Encoder(input_size=input_size, hidden_size=hidden_size)
-        self.decoder = Decoder(input_size=input_size, hidden_size=hidden_size)
-
-    def forward(self, x, return_last_h=False, return_enc_out=False):
-        x_enc, enc_out = self.encoder(x)
-        x_dec, last_h = self.decoder(x_enc)
-
-        if return_last_h:
-            return x_dec, last_h
-        elif return_enc_out:
-            return x_dec, enc_out
-        return x_dec 
-'''      
+    
     
 def train_epoch_lstm(input_data, net, criterion, optimizer) :
     """
-    Train the neural network.
+    Train the LSTM neural network.
 
     Inputs:
         * input_data (np.array): dataset to train the neural network 
@@ -161,7 +150,7 @@ def train_epoch_lstm(input_data, net, criterion, optimizer) :
     
 def valid_epoch_lstm(test_data, net):
     """
-    Evaluate the neural network.
+    Evaluate the LSTM neural network.
 
     Inputs:
         * test_data (np.array): dataset to evaluate using the trained neural network 
@@ -189,7 +178,7 @@ def valid_epoch_lstm(test_data, net):
 
 def relative_error_lstm(y, y_pred) : 
     """
-    Evaluate the relative error.
+    Evaluate the relative error for the LSTM model.
 
     Inputs:
         * y (np.array): the true outputs (equal to the inputs in the autoencoder) 
