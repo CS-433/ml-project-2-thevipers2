@@ -4,9 +4,7 @@
 
 ## General information 
 
-The repository contains the code for Machine Learning course (CS-433) 2021 for the __ML4Science__ project 2 at EPFL. Our project aims at investigating the relationship between classical numerical methods and deep-learning techniques, with the final purpose of efficiently providing accurate solutions to parametrized PDE problems, being fully unaware of the values of the characteristic parameters. The professor's Deparis lab has developed efficient numerical methods for the resolution of parametrized time-dependent PDEs. In the following, we develop deep-learning models that take advantage of these numerical methods to solve parametrized unsteady PDEs without any knowledge of the characteristic parameters. 
-
-In this work we make progress to this end by proposing deep-learning approaches to identify and evolve a __low-dimensional__ representation of a spatiotemporal system. In particular, we employ PyTorch _Feed-Forward AEs_ and _Long short-term memory AEs_, or LSTM AEs, to learn an optimal low-dimensional representation of the full state of the system.
+The repository contains the code for the EPFL Machine Learning course (CS-433) 2021 for the __ML4Science__ project. This project is done in the context of the Partial Differential Equation with Deep Neural Networks (PDE-DNN) project run by Professor's Deparis lab. Using preexisting code, we have simulated the blood flow in an arterial bifurcation featuring a stenosis relying on Stokes equation and finite elements method with MATLAB (code not in the repository). Our goal is to implement an autoencoder (AE) to compress the mathematical solutions of the blood flow which are differentially sampled in time and space. In this work we make progress to this end by proposing two autoencoder (AE) architectures to identify and evolve a __low-dimensional__ representation of a spatiotemporal system. In particular, we employ PyTorch _Feed-Forward AEs_ and _Long short-term memory AEs_ (_LSTM AEs_) to learn an optimal low-dimensional representation of the full state of the system. Ideally, we would expect the compression to lay in a 5 dimensional subspace. Indeed, we know that there are exactly 5 physical parameters that characterize the equations, so theoretically it should be possible to have only 5 neurons in the latent space. In a second time, we investigate the relationship between the low number of "abstract parameters" and the 5 initial physical parameters. This relationship would enable us to recover the 5 initial parameters that have generated the blood flow from only some measurements.
 
 ### Team members
 The project is accomplished by the team `TheVipers` with members:
@@ -16,16 +14,16 @@ The project is accomplished by the team `TheVipers` with members:
 - Theau Vannier: [@theauv](https://github.com/theauv)
 
 ### Data
-The data used in our work describes the __blood flow__ in an artery with a bifurcation and a stenosis. This data set was obtained by running multiple simulations which solve unsteady Navier-Stokes equations with random generated stenosis parameters on MatLab. There are 5 stenosis parameters that can be set at the beginning of the experiment: µ<sub>1</sub> stenosis width, µ<sub>2</sub> stenosis height, µ<sub>3</sub> distance between the 2 stenosis plaque centers, R<sub>1</sub> resistive term of the first bifurcation and R<sub>2</sub> resistive term of the second bifurcation as well as the final number of simulations.  
+The data used in our work describes the __blood flow__ in an artery with a bifurcation and a stenosis, which is modelled as the union of two semi-elliptical plaques. We generate the dataset by running on MatLab numerical simulations, which solve unsteady Stokes equations with random parameters characterizing the stenonis' shape. The output of each simulation is the discrete approximation of the time-evolution of the blood velocity u and pressure p in the considered domain, which is discretized with a suitable mesh-grid. There are 5 parameters that can be set: µ<sub>1</sub> stenosis width, µ<sub>2</sub> stenosis height, µ<sub>3</sub> distance between the 2 stenosis plaque centers, R<sub>1</sub> and R<sub>2</sub> resistive term of the first and of the second bifurcation respectively. We generate our dataset performing 550 simulations corresponding to randomly selected combinations of the 5 model parameters.  
 <p align="center">
   <img src="/img/nice_illustration.png" alt="params" width="500"/>
 </p> 
 
-The data simulator generetes 4 files:  
+The data simulator generates 4 files:  
 - u1.csv: which represents the x coordinate of the blood speed in the artery
 - u2.csv: which represents the y coordinate of the blood speed in the artery
 - p.csv: which represents the blood pressure in the artery
-- params.csv: which represents the stenosis parameters
+- params.csv: which represents the model parameters
 
 
 ### How to run the code
@@ -66,7 +64,7 @@ And the final results are saved in: ...
 
 ### Notebook
 
-`main.ipynb`: data exploration and preprocessing. Deployment of Feed-Forward Autoencoder by tuning the best parameters through cross validation. Analysis and visualisation of the test and training errors with different choices of parameters.
+`main.ipynb`: data exploration and preprocessing. Deployment of Feed-Forward Autoencoder by tuning the best parameters through cross validation. Analysis and visualisation of the test and training errors with different choices of parameters. Linear regression between the abstract parameters of the latent space of the AE and the initial 5 physical parameters.
 
 `lstm_main.ipynb`: data exploration and preprocessing. Deployment of Recurrent LSTM Autoencoder by tuning the best parameters through cross validation. Analysis and visualisation of the test and training errors with different choices of parameters.
 
@@ -81,7 +79,7 @@ And the final results are saved in: ...
 
 ### Feed-forward AE
 
-Consists of fully-connected layers stacked on top of each other. 
+Consists of fully-connected linear layers stacked on top of each other. 
 
 <p align="center">
   <img src="/img/Architecture.png" alt="Feed_Architecture" width="500"/>
