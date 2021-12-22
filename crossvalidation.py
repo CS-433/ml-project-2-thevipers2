@@ -154,7 +154,7 @@ def tuning_latent_layer(dataset, k_folds, input_size, epochs, criterion, lr, num
 
 
 
-def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, dataset_name_="very_small", plot = True) : #model ??
+def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, dataset_name_="very_small", plot = True) :
     """
     Perform K-fold cross-validation to find the best learning rate of our model.
 
@@ -199,10 +199,7 @@ def tuning_lr(dataset, k_folds, input_size, epochs, criterion, learning_rates, d
     return best_result, best_learning_rate
 
 
-
-###########Functions not used############
-
-def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) : #model ??
+def tuning_lr_momentum(dataset, k_folds, input_size, epochs, criterion, learning_rates, momentums) :
     """
     Perform K-fold cross-validation to .
 
