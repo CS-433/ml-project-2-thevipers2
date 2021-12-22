@@ -11,6 +11,12 @@ from torch.autograd import Variable
 
 class Autoencoder(nn.Module) :
     def __init__(self, input_size, neuron=5) :
+        """
+        Model initialisation.
+        Inputs:
+            * input_size : the number of expected features in the input x, corresponds to time-steps of the input matrices
+            * neuron : the number of neurons in our latent layer
+        """
         super().__init__()
         
         # encoder network architecture
@@ -33,7 +39,15 @@ class Autoencoder(nn.Module) :
         nn.Linear(256, input_size)
         )
         
-    def forward(self,x, show_compression=False) : 
+    def forward(self, x, show_compression=False):
+        """
+        Run forward computation.
+        Inputs:
+            * x (torch.Tensor): tensor of input data
+            * show_compression (boolean): true to return x 
+        Outputs: 
+            * x (torch.Tensor): final output
+        """
         x = self.encoder(x)
         if(show_compression) :
             return x
