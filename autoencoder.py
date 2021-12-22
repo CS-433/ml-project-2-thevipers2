@@ -14,7 +14,7 @@ class Autoencoder(nn.Module) :
         """
         Model initialisation.
         Inputs:
-            * input_size : the number of expected features in the input x, corresponds to time-steps of the input matrices
+            * input_size : the number of expected features in the input x
             * neuron : the number of neurons in our latent layer
         """
         super().__init__()
