@@ -79,7 +79,7 @@ And the final results are saved in: ...
 
 ### Feed-forward AE
 
-Consists of fully-connected linear layers stacked on top of each other. 
+The feed-forward AE consists of fully-connected linear layers stacked on top of each other. The input size - which is the same as the output size - depends on the sampling which is applied on time and space. Different latent sizes are tested during the training state in `main.ipynb`.
 
 <p align="center">
   <img src="/img/Architecture.png" alt="Feed_Architecture" width="500"/>
@@ -87,7 +87,7 @@ Consists of fully-connected linear layers stacked on top of each other.
 
 ### LSTM AE
 
-Autoencoder for sequences of matrices which consists of stacked LSTMs.
+The architecture of the LSTM AE is displayed below. Again, the input and the output size depend on the sampling and different latent sizes are tested during the training in `lstm_main.ipynb`. Each layer of the encoder and of the decoder is a LSTM layer.
 
 <p align="center">
   <img src="/img/Architecture_lstm.png" alt="Architecture_lstm" width="500"/>
@@ -95,5 +95,6 @@ Autoencoder for sequences of matrices which consists of stacked LSTMs.
 
 ***
 ## References
-[1]Dal Santo, N., Deparis, S., and Pegolotti, L., “Data driven approximation of parametrized PDEs by reduced basis and neural networks”, <i>Journal of Computational Physics</i>, vol. 416, 2020. doi:10.1016/j.jcp.2020.109550.
+
+[1] Dal Santo, N., Deparis, S., and Pegolotti, L., “Data driven approximation of parametrized PDEs by reduced basis and neural networks”, <i>Journal of Computational Physics</i>, vol. 416, 2020. doi:10.1016/j.jcp.2020.109550.
 
