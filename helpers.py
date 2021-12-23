@@ -80,7 +80,8 @@ def physical_params_pipeline(dataset_name= 'data/pickle/middle_small/processed_m
 
     '''
     This pipeline tries to fit a regression model to the compressed data (solution of the encoder) with the true parameters of 
-    the haemodynamic problem
+    the haemodynamic problem at each each training epoch of the auto-encoder
+    
     This pipeline is meant to do the following steps :
         - Load the subdataset we want to use and load the real parameters that generated this dataset (solutions of the 
             haemodynamic problem)
@@ -235,6 +236,30 @@ def plot_regression_epochs(epochs, test_scores, train_scores, method_name) :
 
 def pipeline_ParametersQuality_subsample(dataset_name= 'middle_small', params_name= "Data/params_middle_small.csv.bz2", epochs=50, degree=3, alpha_=1,  learningRate = 1e-4, neuron_=10, criterion = nn.MSELoss(), seed=1) :
     
+    '''
+    This pipeline tries to fit a regression model to the compressed data (solution of the encoder) with the true parameters of 
+    the haemodynamic problem for the different subsampled datasets.
+    
+    This pipeline is meant to do the following steps for each sub-dataset in the the folder 'dataset_name' :
+        - Load the dataset
+        - Split the dataset in x_train and x_test, same for the parameters, they will the "y" of our future regression problem
+        - Train/Test the autoencoder for a certain number of epochs
+        - Fit a ridge regression with plynomial extension. X = solution of the encoder (compression) and Y = real parameters of the problem
+    Inputs:
+        * dataset_name : name of the folder of the subdatasets
+        * params_name : real parameters that generated this dataset
+        * epochs : maximum number of epochs
+        * degree : degree of polynomial extension
+        * alpha_ : ridge regularization factor
+        * learningRate : learning rate for the auto-encoder
+        * neuron_ : number of neurons in the latent space
+        * criterion : metric used for the optimization of the auto-encoder  (default MSE loss)
+        * seed : fix the train/test split
+    Outputs :
+        * test_scores : Test scores of the ridge regression for each subdataset
+        * train_scores : Train scores of the ridge regression for each subdataset
+        * names : Names of each sub-datasets (just to keep track of them)
+    '''
     
     file_location = os.path.join('data', 'pickle', dataset_name, '*')
     filenames = glob.glob(file_location)
