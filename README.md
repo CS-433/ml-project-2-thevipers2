@@ -91,7 +91,7 @@ The library for visualization is `matplotlib3.3.4`.
 The library for autoencoder implementation is `pytorch1.10.0`. 
 Annex libraries used are `pandas`, `sklearn`, `os`, `glob` and `_pickle`.
 
-All the data required to reproduce our results are stored in a drive, you can find them using this [link](https://drive.google.com/drive/folders/1mePpM9uwHIQnvnxh0rlZkAbvd7gRzQW4?usp=sharing)
+All the data required to reproduce our results are stored in a drive, you can find them using this [link](https://drive.google.com/drive/folders/1mePpM9uwHIQnvnxh0rlZkAbvd7gRzQW4?usp=sharing).
 
 From this drive repository, you have to download the 'data' folder in the folder of this project, namely 'ml-project-2-thevipers2'.
 
