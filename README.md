@@ -101,9 +101,9 @@ Then you can run the notebooks `main.ipynb` or `lstm_main.ipynb`. If you don't w
 
 ## References
 
-[1] F. J. Gonzalez and M. Balajewicz, “Deep convolutional recurrent autoencoders for learning low-dimensional feature dynamics of fluid systems.” [Online]. Available: http://arxiv.org/abs/1808.01346
-[2] N. Dal Santo, S. Deparis, and L. Pegolotti, “Data driven approximation of parametrized PDEs by reduced basis and neural networks,” vol. 416, p. 109550. [Online]. Available: https://www.sciencedirect.com/science/ article/pii/S0021999120303247
-[3] D. Rumelhart, G. E. Hinton, and R. J. Williams, “Learning internal representations by error propagation.”
-[4] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” vol. 9, no. 8, pp. 1735–1780. [Online]. Available: https://doi.org/10.1162/neco. 1997.9.8.1735
+[1] F. J. Gonzalez and M. Balajewicz, “Deep convolutional recurrent autoencoders for learning low-dimensional feature dynamics of fluid systems.” [Online]. Available: http://arxiv.org/abs/1808.01346. 
+[2] N. Dal Santo, S. Deparis, and L. Pegolotti, “Data driven approximation of parametrized PDEs by reduced basis and neural networks,” vol. 416, p. 109550. [Online]. Available: https://www.sciencedirect.com/science/ article/pii/S0021999120303247. 
+[3] D. Rumelhart, G. E. Hinton, and R. J. Williams, “Learning internal representations by error propagation.”  
+[4] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” vol. 9, no. 8, pp. 1735–1780. [Online]. Available: https://doi.org/10.1162/neco. 1997.9.8.1735  
 
 
