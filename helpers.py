@@ -70,7 +70,7 @@ def plot_sampled_coord(indices, coord_path='data/coordinates.csv') :
     sns.scatterplot(coords[:,0], coords[:,1], color = 'k', alpha = .5, s=5, label='Points of the meshgrid')
     plt.xlabel('x', fontsize=20) ; plt.ylabel('y', fontsize=20)
     title = 'Sampled positions of the simulation (' + str(round((len(indices)/5509)*100, 1)) + '% of the positions)'
-    plt.title(title)
+    plt.title(title, fontsize=16)
     plt.legend(fontsize=15)
     plt.savefig("Distribution of the sampled positions")
     plt.show()
