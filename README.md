@@ -26,13 +26,6 @@ The data simulator generates 4 files:
 - params.csv: which represents the model parameters
 
 
-### How to run the code
-The project has been developed and tested with `python3.8`.
-The required library for running the models and training is `numpy1.20.1`.
-The library for visualization is `matplotlib3.3.4`.
-The library for autoencoder implementation is `pytorch1.10.0`. 
-Annex libraries used are `pandas`, `sklearn` and `_pickle`.
-
 ***
 ## Project architecture
 
@@ -89,6 +82,23 @@ The architecture of the LSTM AE is displayed below. Again, the input and the out
 </p>
 
 ***
+
+
+## How to run the code
+The project has been developed and tested with `python3.8`.
+The required library for running the models and training is `numpy1.20.1`.
+The library for visualization is `matplotlib3.3.4`.
+The library for autoencoder implementation is `pytorch1.10.0`. 
+Annex libraries used are `pandas`, `sklearn`, `os`, `glob` and `_pickle`.
+
+All the data required to reproduce our results are stored in a drive, you can find them using this link : https://drive.google.com/drive/folders/1wYPxnje6MOm8AfMKVdmLFQoMoidb1sTZ
+
+From this drive repository, you have to download the 'data' folder in the folder of this project, namely 'ml-project-2-thevipers2'.
+
+Then you can run the notebooks 'main' or 'lstm_main' . If you don't want to reload the whole dataset (bz2 files), you can directly jump to the pickle loading in the notebook (you should see a link in the notebook after the importations to do it).
+
+***
+
 ## References
 
 [1] Dal Santo, N., Deparis, S., and Pegolotti, L., “Data driven approximation of parametrized PDEs by reduced basis and neural networks”, <i>Journal of Computational Physics</i>, vol. 416, 2020. doi:10.1016/j.jcp.2020.109550.
