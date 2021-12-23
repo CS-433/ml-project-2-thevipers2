@@ -95,11 +95,15 @@ All the data required to reproduce our results are stored in a drive, you can fi
 
 From this drive repository, you have to download the 'data' folder in the folder of this project, namely 'ml-project-2-thevipers2'.
 
-Then you can run the notebooks 'main' or 'lstm_main'. If you don't want to reload the whole dataset (bz2 files), you can directly jump to the pickle loading in the notebook (you should see a link in the notebook after the importations to do it).
+Then you can run the notebooks `main.ipynb` or `lstm_main.ipynb`. If you don't want to reload the whole dataset (bz2 files), you can directly jump to the pickle loading in the notebook (you should see a link in the notebook after the importations to do it).
 
 ***
 
 ## References
 
-[1] Dal Santo, N., Deparis, S., and Pegolotti, L., “Data driven approximation of parametrized PDEs by reduced basis and neural networks”, <i>Journal of Computational Physics</i>, vol. 416, 2020. doi:10.1016/j.jcp.2020.109550.
+[1] F. J. Gonzalez and M. Balajewicz, “Deep convolutional recurrent autoencoders for learning low-dimensional feature dynamics of fluid systems.” [Online]. Available: http://arxiv.org/abs/1808.01346
+[2] N. Dal Santo, S. Deparis, and L. Pegolotti, “Data driven approximation of parametrized PDEs by reduced basis and neural networks,” vol. 416, p. 109550. [Online]. Available: https://www.sciencedirect.com/science/ article/pii/S0021999120303247
+[3] D. Rumelhart, G. E. Hinton, and R. J. Williams, “Learning internal representations by error propagation.”
+[4] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” vol. 9, no. 8, pp. 1735–1780. [Online]. Available: https://doi.org/10.1162/neco. 1997.9.8.1735
+
 
